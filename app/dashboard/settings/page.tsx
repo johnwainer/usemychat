@@ -145,7 +145,7 @@ export default function Settings() {
                   type="text"
                   value={formData.full_name}
                   onChange={handleChange}
-                  className="pl-10 w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                  className="pl-10 w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all text-gray-900"
                   placeholder="Juan Pérez"
                 />
               </div>
@@ -182,7 +182,7 @@ export default function Settings() {
                   type="text"
                   value={formData.company}
                   onChange={handleChange}
-                  className="pl-10 w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                  className="pl-10 w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all text-gray-900"
                   placeholder="Mi Empresa S.A."
                 />
               </div>
@@ -200,7 +200,7 @@ export default function Settings() {
                   type="tel"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="pl-10 w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                  className="pl-10 w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all text-gray-900"
                   placeholder="+1 234 567 8900"
                 />
               </div>

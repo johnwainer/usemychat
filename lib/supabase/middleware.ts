@@ -35,6 +35,8 @@ export async function updateSession(request: NextRequest) {
     '/',
     '/login',
     '/register',
+    '/forgot-password',
+    '/reset-password',
     '/faqs',
     '/contacto',
     '/sobre-nosotros',
@@ -54,6 +56,19 @@ export async function updateSession(request: NextRequest) {
   if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
+    return NextResponse.redirect(url)
+  }
+
+  // Redirect logged-in users away from auth pages
+  if (user && (request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/register')) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+
+    const url = request.nextUrl.clone()
+    url.pathname = profile?.role === 'admin' ? '/admin/dashboard' : '/dashboard'
     return NextResponse.redirect(url)
   }
 

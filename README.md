@@ -145,7 +145,31 @@ npx supabase db push
 3. Ejecuta el archivo `supabase/migrations/COMPLETE_TEAM_SYSTEM.sql`
 4. Verifica que todas las tablas y funciones se crearon correctamente
 
-### 5. Ejecutar en desarrollo
+### 5. Configurar Emails (Importante para invitaciones de equipo) ⭐
+
+Para que las invitaciones de equipo se envíen por email:
+
+1. **Lee la guía completa**: [`docs/EMAIL_SETUP.md`](docs/EMAIL_SETUP.md)
+
+2. **Configuración rápida**:
+   - Ve a Supabase Dashboard → Settings → Authentication → SMTP Settings
+   - Habilita "Enable Custom SMTP"
+   - Configura un proveedor SMTP (SendGrid, Resend, AWS SES)
+   - Configura la plantilla de email en Authentication → Email Templates
+
+3. **Proveedores recomendados**:
+   - **SendGrid**: Gratis hasta 100 emails/día
+   - **Resend**: Gratis hasta 3,000 emails/mes
+   - **AWS SES**: Muy económico para alto volumen
+
+4. **Sin SMTP configurado**:
+   - Las invitaciones se crean correctamente
+   - Puedes copiar el enlace manualmente para compartirlo
+   - El botón de reenvío seguirá funcionando
+
+> 📧 **Nota**: Sin SMTP configurado, las invitaciones funcionan pero debes copiar el enlace manualmente. Para producción, se recomienda configurar SMTP.
+
+### 6. Ejecutar en desarrollo
 
 ```bash
 npm run dev
@@ -184,7 +208,12 @@ usemychat/
 ├── supabase/                    # Configuración de Supabase
 │   └── migrations/             # Migraciones SQL
 ├── docs/                        # Documentación
-│   └── TEAM_MANAGEMENT.md      # Guía del sistema de equipos
+│   ├── TEAM_MANAGEMENT.md      # Guía del sistema de equipos
+│   ├── EMAIL_SETUP.md          # Configuración de emails
+│   ├── SECURITY.md             # Seguridad
+│   ├── DEPLOYMENT.md           # Despliegue
+│   ├── API.md                  # Documentación de API
+│   └── QUICK_START.md          # Inicio rápido
 └── public/                      # Archivos estáticos
 ```
 

@@ -21,7 +21,8 @@ import {
   Clock,
   Send,
   Copy,
-  Check
+  Check,
+  RefreshCw
 } from 'lucide-react';
 
 interface TeamMember {
@@ -145,6 +146,13 @@ export default function TeamPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
+    // Get user profile for inviter name
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('full_name')
+      .eq('id', user.id)
+      .single();
+
     // Generate invitation token
     const token = crypto.randomUUID();
     const expiresAt = new Date();
@@ -162,13 +170,90 @@ export default function TeamPage() {
       });
 
     if (error) {
-      alert('Error al enviar invitación: ' + error.message);
-    } else {
-      alert('Invitación enviada exitosamente');
+      alert('Error al crear invitación: ' + error.message);
+      setSending(false);
+      return;
+    }
+
+    // Send invitation email via API
+    try {
+      const response = await fetch('/api/team/send-invitation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: inviteEmail,
+          role: inviteRole,
+          token,
+          inviterName: profile?.full_name || 'Un miembro del equipo'
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        if (result.emailSent) {
+          alert('✅ Invitación enviada por email exitosamente');
+        } else {
+          alert('⚠️ Invitación creada. El email no pudo ser enviado, pero puedes copiar el enlace para compartirlo manualmente.');
+        }
+        setShowInviteModal(false);
+        setInviteEmail('');
+        setInviteRole('agent');
+        fetchData();
+      } else {
+        alert('Error al enviar invitación: ' + result.error);
+      }
+    } catch (error) {
+      alert('Error al enviar invitación. Puedes copiar el enlace manualmente.');
       setShowInviteModal(false);
       setInviteEmail('');
       setInviteRole('agent');
       fetchData();
+    }
+
+    setSending(false);
+  };
+
+  const handleResendInvitation = async (invitation: any) => {
+    setSending(true);
+
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    // Get user profile for inviter name
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('full_name')
+      .eq('id', user.id)
+      .single();
+
+    // Send invitation email via API
+    try {
+      const response = await fetch('/api/team/send-invitation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: invitation.email,
+          role: invitation.role,
+          token: invitation.token,
+          inviterName: profile?.full_name || 'Un miembro del equipo'
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        if (result.emailSent) {
+          alert('✅ Invitación reenviada por email exitosamente');
+        } else {
+          alert('⚠️ El email no pudo ser enviado. Puedes copiar el enlace para compartirlo manualmente.');
+        }
+      } else {
+        alert('Error al reenviar invitación: ' + result.error);
+      }
+    } catch (error) {
+      alert('Error al reenviar invitación');
     }
 
     setSending(false);
@@ -373,6 +458,14 @@ export default function TeamPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <button
+                      onClick={() => handleResendInvitation(invitation)}
+                      disabled={sending}
+                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      title="Reenviar invitación por email"
+                    >
+                      <RefreshCw className={`w-5 h-5 ${sending ? 'animate-spin' : ''}`} />
+                    </button>
+                    <button
                       onClick={() => copyInvitationLink(invitation.token)}
                       className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
                       title="Copiar enlace de invitación"
@@ -386,6 +479,7 @@ export default function TeamPage() {
                     <button
                       onClick={() => handleCancelInvitation(invitation.id)}
                       className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      title="Cancelar invitación"
                     >
                       <XCircle className="w-5 h-5" />
                     </button>

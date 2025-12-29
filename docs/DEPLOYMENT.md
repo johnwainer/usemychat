@@ -165,15 +165,65 @@ Value: cname.vercel-dns.com
    - **Site URL**: `https://usemychat.com`
    - **Redirect URLs**: Agrega tu dominio personalizado
 
-## 🔐 Paso 4: Seguridad Post-Despliegue
+## 📧 Paso 4: Configurar Emails (Importante) ⭐
 
-### 4.1 Verificar HTTPS
+### 4.1 ¿Por qué configurar emails?
+
+El sistema de invitaciones de equipo envía emails automáticamente. Sin configuración SMTP:
+- ✅ Las invitaciones se crean correctamente
+- ⚠️ Los emails NO se envían
+- 📋 Debes copiar el enlace manualmente
+
+### 4.2 Configuración Rápida
+
+**Lee la guía completa**: [`EMAIL_SETUP.md`](EMAIL_SETUP.md)
+
+**Pasos básicos**:
+
+1. **Elegir proveedor SMTP** (recomendados):
+   - **SendGrid**: Gratis hasta 100 emails/día
+   - **Resend**: Gratis hasta 3,000 emails/mes
+   - **AWS SES**: Muy económico para alto volumen
+
+2. **Configurar en Supabase**:
+   - Ve a **Settings → Authentication → SMTP Settings**
+   - Habilita "Enable Custom SMTP"
+   - Configura las credenciales del proveedor
+
+3. **Configurar plantilla de email**:
+   - Ve a **Authentication → Email Templates**
+   - Selecciona "Invite user"
+   - Copia la plantilla de `EMAIL_SETUP.md`
+
+### 4.3 Ejemplo con SendGrid
+
+```
+Sender email: noreply@tudominio.com
+Sender name: UseMyChat
+Host: smtp.sendgrid.net
+Port: 587
+Username: apikey
+Password: [tu API key de SendGrid]
+```
+
+### 4.4 Verificar configuración
+
+1. Invita a un miembro de prueba
+2. Verifica que llegue el email
+3. Prueba el botón de reenvío
+4. Verifica que no vaya a spam
+
+> 📧 **Importante**: Para producción, es altamente recomendado configurar SMTP para una mejor experiencia de usuario.
+
+## 🔐 Paso 5: Seguridad Post-Despliegue
+
+### 5.1 Verificar HTTPS
 
 1. Visita tu sitio: `https://tu-dominio.com`
 2. Verifica el candado de seguridad en el navegador
 3. Vercel proporciona SSL automáticamente
 
-### 4.2 Configurar Headers de Seguridad
+### 5.2 Configurar Headers de Seguridad
 
 Actualiza `next.config.ts`:
 
@@ -217,66 +267,69 @@ const nextConfig = {
 
 Commit y push para redesplegar.
 
-### 4.3 Habilitar Protecciones en Vercel
+### 5.3 Habilitar Protecciones en Vercel
 
 1. Ve a **Settings → Security**
 2. Habilita:
    - **Deployment Protection**: Para prevenir acceso no autorizado
    - **DDoS Protection**: Incluido automáticamente
 
-## 📊 Paso 5: Monitoreo y Mantenimiento
+## 📊 Paso 6: Monitoreo y Mantenimiento
 
-### 5.1 Configurar Analytics
+### 6.1 Configurar Analytics
 
 **Vercel Analytics**:
-1. Ve a **Analytics** en tu proyecto
-2. Habilita Vercel Analytics
-3. Instala el paquete:
+1. Ve a tu proyecto en Vercel
+2. Ve a **Analytics**
+3. Habilita **Web Analytics**
+4. Instala el paquete:
+   ```bash
+   npm install @vercel/analytics
+   ```
+5. Agrega en `app/layout.tsx`:
+   ```typescript
+   import { Analytics } from '@vercel/analytics/react';
+
+   export default function RootLayout({ children }) {
+     return (
+       <html>
+         <body>
+           {children}
+           <Analytics />
+         </body>
+       </html>
+     );
+   }
+   ```
+
+**Supabase Analytics**:
+- Ve a Supabase Dashboard → Reports
+- Monitorea queries, performance, y uso de recursos
+
+### 6.2 Configurar Logging
+
+**Vercel Logs**:
+- Ve a tu proyecto → Logs
+- Filtra por errores, warnings, etc.
+
+**Supabase Logs**:
+- Ve a Supabase Dashboard → Logs
+- Monitorea auth, database, y API logs
+
+### 6.3 Backups de Base de Datos
+
+**Supabase automático**:
+- Backups diarios automáticos (plan Pro)
+- Retención de 7 días
+
+**Manual**:
 ```bash
-npm install @vercel/analytics
+npx supabase db dump -f backup.sql
 ```
 
-4. Agrega en `app/layout.tsx`:
-```typescript
-import { Analytics } from '@vercel/analytics/react'
+### 6.4 Monitoreo de Uptime
 
-export default function RootLayout({ children }) {
-  return (
-    <html>
-      <body>
-        {children}
-        <Analytics />
-      </body>
-    </html>
-  )
-}
-```
-
-### 5.2 Configurar Logging
-
-**Recomendado: Sentry**
-
-```bash
-npm install @sentry/nextjs
-```
-
-Sigue la [guía de Sentry para Next.js](https://docs.sentry.io/platforms/javascript/guides/nextjs/)
-
-### 5.3 Backups de Base de Datos
-
-En Supabase:
-1. Ve a **Database → Backups**
-2. Los backups diarios están incluidos en planes pagos
-3. Configura backups adicionales si es necesario
-
-### 5.4 Monitoreo de Uptime
-
-Usa servicios como:
-- [UptimeRobot](https://uptimerobot.com/) (gratis)
-- [Pingdom](https://www.pingdom.com/)
-- [Better Uptime](https://betteruptime.com/)
-
-## 🔄 Paso 6: Actualizaciones y CI/CD
+## 🔄 Paso 7: Actualizaciones y CI/CD
 
 ### 6.1 Despliegue Automático
 

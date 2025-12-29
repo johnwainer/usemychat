@@ -12,6 +12,7 @@ export default function Register() {
     fullName: '',
     email: '',
     company: '',
+    phone: '',
     password: '',
     confirmPassword: '',
   });
@@ -225,6 +226,24 @@ export default function Register() {
                     onChange={handleChange}
                     className="pl-10 w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all text-gray-900"
                     placeholder="Mi Empresa S.A."
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                  Teléfono (opcional)
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className="pl-10 w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all text-gray-900"
+                    placeholder="+1 234 567 8900"
                   />
                 </div>
               </div>

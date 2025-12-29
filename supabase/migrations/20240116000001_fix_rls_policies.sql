@@ -1,114 +1,115 @@
--- Fix infinite recursion in RLS policies for profiles table
+-- CRITICAL FIX: Remove ALL policies causing infinite recursion
+-- This script must be executed in Supabase SQL Editor
 
--- Drop all existing policies on profiles
-DROP POLICY IF EXISTS "Users can view their own profile" ON public.profiles;
-DROP POLICY IF EXISTS "Users can update their own profile" ON public.profiles;
-DROP POLICY IF EXISTS "Admins can update any profile" ON public.profiles;
-DROP POLICY IF EXISTS "Admins can view all profiles" ON public.profiles;
-DROP POLICY IF EXISTS "Users can insert their own profile" ON public.profiles;
-DROP POLICY IF EXISTS "Enable read access for authenticated users" ON public.profiles;
+-- Step 1: Disable RLS temporarily to fix the issue
+ALTER TABLE public.profiles DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.user_statistics DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.activity_logs DISABLE ROW LEVEL SECURITY;
 
--- Create simple, non-recursive policies
-CREATE POLICY "Enable read access for own profile"
+-- Step 2: Drop ALL existing policies
+DO $$
+DECLARE
+    r RECORD;
+BEGIN
+    -- Drop all policies on profiles
+    FOR r IN (SELECT policyname FROM pg_policies WHERE tablename = 'profiles' AND schemaname = 'public') LOOP
+        EXECUTE 'DROP POLICY IF EXISTS "' || r.policyname || '" ON public.profiles';
+    END LOOP;
+
+    -- Drop all policies on user_statistics
+    FOR r IN (SELECT policyname FROM pg_policies WHERE tablename = 'user_statistics' AND schemaname = 'public') LOOP
+        EXECUTE 'DROP POLICY IF EXISTS "' || r.policyname || '" ON public.user_statistics';
+    END LOOP;
+
+    -- Drop all policies on activity_logs
+    FOR r IN (SELECT policyname FROM pg_policies WHERE tablename = 'activity_logs' AND schemaname = 'public') LOOP
+        EXECUTE 'DROP POLICY IF EXISTS "' || r.policyname || '" ON public.activity_logs';
+    END LOOP;
+END $$;
+
+-- Step 3: Create a simple function to check if user is admin (avoids recursion)
+CREATE OR REPLACE FUNCTION public.is_admin(user_id UUID)
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.profiles
+    WHERE id = user_id AND role = 'admin'
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
+
+-- Step 4: Create NEW simple policies for profiles
+CREATE POLICY "profiles_select_own"
   ON public.profiles FOR SELECT
   TO authenticated
-  USING (auth.uid() = id);
+  USING (id = auth.uid());
 
-CREATE POLICY "Enable read access for admins"
+CREATE POLICY "profiles_select_all_if_admin"
   ON public.profiles FOR SELECT
   TO authenticated
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles admin_check
-      WHERE admin_check.id = auth.uid() 
-      AND admin_check.role = 'admin'
-      LIMIT 1
-    )
-  );
+  USING (public.is_admin(auth.uid()));
 
-CREATE POLICY "Enable update for own profile"
+CREATE POLICY "profiles_update_own"
   ON public.profiles FOR UPDATE
   TO authenticated
-  USING (auth.uid() = id)
-  WITH CHECK (auth.uid() = id);
+  USING (id = auth.uid())
+  WITH CHECK (id = auth.uid());
 
-CREATE POLICY "Enable update for admins"
-  ON public.profiles FOR UPDATE
-  TO authenticated
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles admin_check
-      WHERE admin_check.id = auth.uid() 
-      AND admin_check.role = 'admin'
-      LIMIT 1
-    )
-  );
-
-CREATE POLICY "Enable insert for service role"
+CREATE POLICY "profiles_insert_own"
   ON public.profiles FOR INSERT
   TO authenticated
-  WITH CHECK (auth.uid() = id);
+  WITH CHECK (id = auth.uid());
 
--- Fix user_statistics policies
-DROP POLICY IF EXISTS "Users can view their own statistics" ON public.user_statistics;
-DROP POLICY IF EXISTS "Admins can view all statistics" ON public.user_statistics;
-DROP POLICY IF EXISTS "Users can insert their own statistics" ON public.user_statistics;
-DROP POLICY IF EXISTS "Users can update their own statistics" ON public.user_statistics;
-
-CREATE POLICY "Enable read for own statistics"
+-- Step 5: Create policies for user_statistics
+CREATE POLICY "user_statistics_select_own"
   ON public.user_statistics FOR SELECT
   TO authenticated
-  USING (auth.uid() = user_id);
+  USING (user_id = auth.uid());
 
-CREATE POLICY "Enable read for admin statistics"
+CREATE POLICY "user_statistics_select_all_if_admin"
   ON public.user_statistics FOR SELECT
   TO authenticated
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND role = 'admin'
-      LIMIT 1
-    )
-  );
+  USING (public.is_admin(auth.uid()));
 
-CREATE POLICY "Enable insert for own statistics"
+CREATE POLICY "user_statistics_insert_own"
   ON public.user_statistics FOR INSERT
   TO authenticated
-  WITH CHECK (auth.uid() = user_id);
+  WITH CHECK (user_id = auth.uid());
 
-CREATE POLICY "Enable update for own statistics"
+CREATE POLICY "user_statistics_update_own"
   ON public.user_statistics FOR UPDATE
   TO authenticated
-  USING (auth.uid() = user_id)
-  WITH CHECK (auth.uid() = user_id);
+  USING (user_id = auth.uid())
+  WITH CHECK (user_id = auth.uid());
 
--- Fix activity_logs policies
-DROP POLICY IF EXISTS "Users can view their own activity" ON public.activity_logs;
-DROP POLICY IF EXISTS "Admins can view all activity" ON public.activity_logs;
-DROP POLICY IF EXISTS "Users can insert their own activity" ON public.activity_logs;
-
-CREATE POLICY "Enable read for own activity"
+-- Step 6: Create policies for activity_logs
+CREATE POLICY "activity_logs_select_own"
   ON public.activity_logs FOR SELECT
   TO authenticated
-  USING (auth.uid() = user_id);
+  USING (user_id = auth.uid());
 
-CREATE POLICY "Enable read for admin activity"
+CREATE POLICY "activity_logs_select_all_if_admin"
   ON public.activity_logs FOR SELECT
   TO authenticated
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND role = 'admin'
-      LIMIT 1
-    )
-  );
+  USING (public.is_admin(auth.uid()));
 
-CREATE POLICY "Enable insert for activity logs"
+CREATE POLICY "activity_logs_insert_own"
   ON public.activity_logs FOR INSERT
   TO authenticated
-  WITH CHECK (auth.uid() = user_id);
+  WITH CHECK (user_id = auth.uid());
 
--- Grant necessary permissions
+-- Step 7: Re-enable RLS
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.user_statistics ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.activity_logs ENABLE ROW LEVEL SECURITY;
+
+-- Step 8: Grant permissions
 GRANT ALL ON public.profiles TO authenticated;
 GRANT ALL ON public.user_statistics TO authenticated;
 GRANT ALL ON public.activity_logs TO authenticated;
+
+-- Step 9: Verify policies were created
+SELECT schemaname, tablename, policyname, permissive, roles, cmd, qual
+FROM pg_policies
+WHERE tablename IN ('profiles', 'user_statistics', 'activity_logs')
+ORDER BY tablename, policyname;

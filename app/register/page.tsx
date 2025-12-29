@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Mail, Lock, User, Building, AlertCircle, Loader2, CheckCircle } from 'lucide-react';
+import { Mail, Lock, User, Building, AlertCircle, Loader2, CheckCircle, ArrowLeft } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
 export default function Register() {
@@ -137,6 +137,10 @@ export default function Register() {
       <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
         <div className="max-w-md w-full space-y-8">
           <div>
+            <Link href="/" className="inline-flex items-center text-gray-600 hover:text-black mb-6 transition-colors">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Volver al inicio
+            </Link>
             <Link href="/" className="flex items-center justify-center mb-6">
               <span className="text-3xl font-bold text-black">UseMyChat</span>
             </Link>
@@ -173,7 +177,7 @@ export default function Register() {
                     required
                     value={formData.fullName}
                     onChange={handleChange}
-                    className="pl-10 w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                    className="pl-10 w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all text-gray-900"
                     placeholder="Juan Pérez"
                   />
                 </div>
@@ -193,7 +197,7 @@ export default function Register() {
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className="pl-10 w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                    className="pl-10 w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all text-gray-900"
                     placeholder="tu@email.com"
                   />
                 </div>
@@ -211,7 +215,7 @@ export default function Register() {
                     type="text"
                     value={formData.company}
                     onChange={handleChange}
-                    className="pl-10 w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                    className="pl-10 w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all text-gray-900"
                     placeholder="Mi Empresa S.A."
                   />
                 </div>
@@ -231,7 +235,7 @@ export default function Register() {
                     required
                     value={formData.password}
                     onChange={handleChange}
-                    className="pl-10 w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                    className="pl-10 w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all text-gray-900"
                     placeholder="••••••••"
                   />
                 </div>
@@ -252,7 +256,7 @@ export default function Register() {
                     required
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="pl-10 w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                    className="pl-10 w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all text-gray-900"
                     placeholder="••••••••"
                   />
                 </div>

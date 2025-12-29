@@ -452,37 +452,37 @@ export default function AdminContactDetailPage() {
               ) : (
                 <>
                   {contact.email && (
-                    <div className="flex items-center gap-3 text-gray-300">
-                      <Mail className="w-5 h-5 text-gray-400" />
-                      <a href={`mailto:${contact.email}`} className="hover:text-blue-400">
+                    <div className="flex items-center gap-3 text-gray-700">
+                      <Mail className="w-5 h-5 text-gray-500" />
+                      <a href={`mailto:${contact.email}`} className="hover:text-blue-600">
                         {contact.email}
                       </a>
                     </div>
                   )}
                   {contact.phone && (
-                    <div className="flex items-center gap-3 text-gray-300">
-                      <Phone className="w-5 h-5 text-gray-400" />
-                      <a href={`tel:${contact.phone}`} className="hover:text-blue-400">
+                    <div className="flex items-center gap-3 text-gray-700">
+                      <Phone className="w-5 h-5 text-gray-500" />
+                      <a href={`tel:${contact.phone}`} className="hover:text-blue-600">
                         {contact.phone}
                       </a>
                     </div>
                   )}
                   {contact.company && (
-                    <div className="flex items-center gap-3 text-gray-300">
-                      <Building className="w-5 h-5 text-gray-400" />
+                    <div className="flex items-center gap-3 text-gray-700">
+                      <Building className="w-5 h-5 text-gray-500" />
                       <span>{contact.company}</span>
                     </div>
                   )}
                   {contact.job_title && (
-                    <div className="flex items-center gap-3 text-gray-300">
-                      <Briefcase className="w-5 h-5 text-gray-400" />
+                    <div className="flex items-center gap-3 text-gray-700">
+                      <Briefcase className="w-5 h-5 text-gray-500" />
                       <span>{contact.job_title}</span>
                     </div>
                   )}
                   {contact.website && (
-                    <div className="flex items-center gap-3 text-gray-300">
-                      <Globe className="w-5 h-5 text-gray-400" />
-                      <a href={contact.website} target="_blank" rel="noopener noreferrer" className="hover:text-blue-400">
+                    <div className="flex items-center gap-3 text-gray-700">
+                      <Globe className="w-5 h-5 text-gray-500" />
+                      <a href={contact.website} target="_blank" rel="noopener noreferrer" className="hover:text-blue-600">
                         {contact.website}
                       </a>
                     </div>
@@ -494,35 +494,35 @@ export default function AdminContactDetailPage() {
 
           {/* Social Media */}
           {!editMode && (contact.instagram || contact.facebook || contact.linkedin || contact.twitter || contact.tiktok || contact.whatsapp || contact.telegram) && (
-            <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-              <h2 className="text-lg font-semibold text-white mb-4">Redes Sociales</h2>
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Redes Sociales</h2>
               <div className="grid grid-cols-2 gap-4">
                 {contact.instagram && (
-                  <a href={`https://instagram.com/${contact.instagram}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-300 hover:text-pink-400">
+                  <a href={`https://instagram.com/${contact.instagram}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-700 hover:text-pink-600">
                     <Instagram className="w-5 h-5" />
                     <span>@{contact.instagram}</span>
                   </a>
                 )}
                 {contact.facebook && (
-                  <a href={`https://facebook.com/${contact.facebook}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-300 hover:text-blue-400">
+                  <a href={`https://facebook.com/${contact.facebook}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-700 hover:text-blue-600">
                     <Facebook className="w-5 h-5" />
                     <span>{contact.facebook}</span>
                   </a>
                 )}
                 {contact.linkedin && (
-                  <a href={`https://linkedin.com/in/${contact.linkedin}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-300 hover:text-blue-400">
+                  <a href={`https://linkedin.com/in/${contact.linkedin}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-700 hover:text-blue-600">
                     <Linkedin className="w-5 h-5" />
                     <span>{contact.linkedin}</span>
                   </a>
                 )}
                 {contact.twitter && (
-                  <a href={`https://x.com/${contact.twitter}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-300 hover:text-gray-100">
+                  <a href={`https://x.com/${contact.twitter}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-700 hover:text-gray-900">
                     <X className="w-5 h-5" />
                     <span>@{contact.twitter}</span>
                   </a>
                 )}
                 {contact.tiktok && (
-                  <a href={`https://tiktok.com/@${contact.tiktok}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-300 hover:text-gray-100">
+                  <a href={`https://tiktok.com/@${contact.tiktok}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-700 hover:text-gray-900">
                     <Music className="w-5 h-5" />
                     <span>@{contact.tiktok}</span>
                   </a>
@@ -532,9 +532,9 @@ export default function AdminContactDetailPage() {
           )}
 
           {/* Interactions History */}
-          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-white">Historial de Interacciones</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Historial de Interacciones</h2>
               <button
                 onClick={() => setShowInteractionModal(true)}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
@@ -546,27 +546,27 @@ export default function AdminContactDetailPage() {
 
             <div className="space-y-4">
               {interactions.length === 0 ? (
-                <p className="text-gray-400 text-center py-8">No hay interacciones registradas</p>
+                <p className="text-gray-500 text-center py-8">No hay interacciones registradas</p>
               ) : (
                 interactions.map((interaction) => (
-                  <div key={interaction.id} className="border border-gray-700 rounded-lg p-4">
+                  <div key={interaction.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
                     <div className="flex items-start gap-3">
-                      <div className="p-2 bg-gray-700 rounded-lg text-blue-400">
+                      <div className="p-2 bg-blue-50 rounded-lg text-blue-600">
                         {getInteractionIcon(interaction.type)}
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-2">
-                          <h3 className="font-medium text-white">
+                          <h3 className="font-medium text-gray-900">
                             {interaction.subject || interaction.type.charAt(0).toUpperCase() + interaction.type.slice(1)}
                           </h3>
-                          <span className="text-sm text-gray-400">
+                          <span className="text-sm text-gray-500">
                             {new Date(interaction.interaction_date).toLocaleDateString()}
                           </span>
                         </div>
                         {interaction.content && (
-                          <p className="text-gray-300 text-sm mb-2">{interaction.content}</p>
+                          <p className="text-gray-700 text-sm mb-2">{interaction.content}</p>
                         )}
-                        <div className="flex items-center gap-4 text-xs text-gray-400">
+                        <div className="flex items-center gap-4 text-xs text-gray-500">
                           {interaction.direction && (
                             <span className="capitalize">{interaction.direction}</span>
                           )}

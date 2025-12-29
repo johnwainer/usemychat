@@ -20,6 +20,7 @@ export default function AdminSettingsPage() {
   }, []);
 
   const fetchProfile = async () => {
+    const supabase = createClient();
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;

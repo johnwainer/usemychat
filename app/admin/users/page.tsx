@@ -24,13 +24,13 @@ export default function AdminUsersPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [filterRole, setFilterRole] = useState<string>('all');
-  const supabase = createClientComponentClient();
 
   useEffect(() => {
     fetchUsers();
   }, []);
 
   const fetchUsers = async () => {
+    const supabase = createClient();
     try {
       const { data, error } = await supabase
         .from('profiles')

@@ -1,69 +1,182 @@
 -- CRM Contacts System Migration
--- This migration creates a comprehensive CRM system for managing contacts
+-- This migration updates the existing contacts table and creates the CRM system
 
 -- ============================================
--- 1. CONTACTS TABLE
+-- 0. CREATE HELPER FUNCTIONS
 -- ============================================
-CREATE TABLE IF NOT EXISTS public.contacts (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  
-  -- Basic Information
-  first_name VARCHAR(100) NOT NULL,
-  last_name VARCHAR(100),
-  full_name VARCHAR(200) GENERATED ALWAYS AS (
-    CASE 
-      WHEN last_name IS NOT NULL THEN first_name || ' ' || last_name
-      ELSE first_name
-    END
-  ) STORED,
-  email VARCHAR(255),
-  phone VARCHAR(50),
-  
-  -- Additional Contact Info
-  company VARCHAR(200),
-  job_title VARCHAR(150),
-  website VARCHAR(255),
-  
-  -- Address Information
-  address_line1 VARCHAR(255),
-  address_line2 VARCHAR(255),
-  city VARCHAR(100),
-  state VARCHAR(100),
-  postal_code VARCHAR(20),
-  country VARCHAR(100),
-  
-  -- Social Media & Communication Channels
-  whatsapp VARCHAR(50),
-  telegram VARCHAR(100),
-  instagram VARCHAR(100),
-  facebook VARCHAR(100),
-  linkedin VARCHAR(100),
-  twitter VARCHAR(100),
-  
-  -- CRM Fields
-  status VARCHAR(50) DEFAULT 'active' CHECK (status IN ('active', 'inactive', 'blocked', 'lead', 'customer', 'prospect')),
-  source VARCHAR(100), -- Where the contact came from (website, referral, campaign, etc.)
-  lead_score INTEGER DEFAULT 0 CHECK (lead_score >= 0 AND lead_score <= 100),
-  lifecycle_stage VARCHAR(50) DEFAULT 'lead' CHECK (lifecycle_stage IN ('lead', 'prospect', 'customer', 'evangelist', 'other')),
-  
-  -- Custom Fields
-  tags TEXT[], -- Array of tags for categorization
-  custom_fields JSONB DEFAULT '{}', -- Flexible custom fields
-  notes TEXT,
-  
-  -- Metadata
-  avatar_url TEXT,
-  last_contact_date TIMESTAMPTZ,
-  next_follow_up_date TIMESTAMPTZ,
-  
-  -- Timestamps
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW(),
-  
-  -- Indexes for performance
-  CONSTRAINT unique_user_email UNIQUE(user_id, email)
-);
+
+-- Create is_admin function if it doesn't exist
+CREATE OR REPLACE FUNCTION public.is_admin(user_id UUID)
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.profiles
+    WHERE id = user_id AND role = 'admin'
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
+
+-- ============================================
+-- 1. UPDATE EXISTING CONTACTS TABLE
+-- ============================================
+
+-- Add new columns to existing contacts table if they don't exist
+DO $$
+BEGIN
+  -- Add first_name if not exists
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='contacts' AND column_name='first_name') THEN
+    ALTER TABLE public.contacts ADD COLUMN first_name VARCHAR(100);
+  END IF;
+
+  -- Add last_name if not exists
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='contacts' AND column_name='last_name') THEN
+    ALTER TABLE public.contacts ADD COLUMN last_name VARCHAR(100);
+  END IF;
+
+  -- Add job_title if not exists
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='contacts' AND column_name='job_title') THEN
+    ALTER TABLE public.contacts ADD COLUMN job_title VARCHAR(150);
+  END IF;
+
+  -- Add website if not exists
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='contacts' AND column_name='website') THEN
+    ALTER TABLE public.contacts ADD COLUMN website VARCHAR(255);
+  END IF;
+
+  -- Add address fields
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='contacts' AND column_name='address_line1') THEN
+    ALTER TABLE public.contacts ADD COLUMN address_line1 VARCHAR(255);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='contacts' AND column_name='address_line2') THEN
+    ALTER TABLE public.contacts ADD COLUMN address_line2 VARCHAR(255);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='contacts' AND column_name='city') THEN
+    ALTER TABLE public.contacts ADD COLUMN city VARCHAR(100);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='contacts' AND column_name='state') THEN
+    ALTER TABLE public.contacts ADD COLUMN state VARCHAR(100);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='contacts' AND column_name='postal_code') THEN
+    ALTER TABLE public.contacts ADD COLUMN postal_code VARCHAR(20);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='contacts' AND column_name='country') THEN
+    ALTER TABLE public.contacts ADD COLUMN country VARCHAR(100);
+  END IF;
+
+  -- Add social media fields
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='contacts' AND column_name='whatsapp') THEN
+    ALTER TABLE public.contacts ADD COLUMN whatsapp VARCHAR(50);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='contacts' AND column_name='telegram') THEN
+    ALTER TABLE public.contacts ADD COLUMN telegram VARCHAR(100);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='contacts' AND column_name='instagram') THEN
+    ALTER TABLE public.contacts ADD COLUMN instagram VARCHAR(100);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='contacts' AND column_name='facebook') THEN
+    ALTER TABLE public.contacts ADD COLUMN facebook VARCHAR(100);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='contacts' AND column_name='linkedin') THEN
+    ALTER TABLE public.contacts ADD COLUMN linkedin VARCHAR(100);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='contacts' AND column_name='twitter') THEN
+    ALTER TABLE public.contacts ADD COLUMN twitter VARCHAR(100);
+  END IF;
+
+  -- Add CRM fields
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='contacts' AND column_name='status') THEN
+    ALTER TABLE public.contacts ADD COLUMN status VARCHAR(50) DEFAULT 'active';
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='contacts' AND column_name='source') THEN
+    ALTER TABLE public.contacts ADD COLUMN source VARCHAR(100);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='contacts' AND column_name='lead_score') THEN
+    ALTER TABLE public.contacts ADD COLUMN lead_score INTEGER DEFAULT 0;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='contacts' AND column_name='lifecycle_stage') THEN
+    ALTER TABLE public.contacts ADD COLUMN lifecycle_stage VARCHAR(50) DEFAULT 'lead';
+  END IF;
+
+  -- Add tags and custom fields
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='contacts' AND column_name='tags') THEN
+    ALTER TABLE public.contacts ADD COLUMN tags TEXT[];
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='contacts' AND column_name='custom_fields') THEN
+    ALTER TABLE public.contacts ADD COLUMN custom_fields JSONB DEFAULT '{}';
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='contacts' AND column_name='notes') THEN
+    ALTER TABLE public.contacts ADD COLUMN notes TEXT;
+  END IF;
+
+  -- Add metadata fields
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='contacts' AND column_name='avatar_url') THEN
+    ALTER TABLE public.contacts ADD COLUMN avatar_url TEXT;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='contacts' AND column_name='last_contact_date') THEN
+    ALTER TABLE public.contacts ADD COLUMN last_contact_date TIMESTAMPTZ;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='contacts' AND column_name='next_follow_up_date') THEN
+    ALTER TABLE public.contacts ADD COLUMN next_follow_up_date TIMESTAMPTZ;
+  END IF;
+
+END $$;
+
+-- Add full_name generated column if it doesn't exist
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='contacts' AND column_name='full_name') THEN
+    ALTER TABLE public.contacts ADD COLUMN full_name VARCHAR(200) GENERATED ALWAYS AS (
+      CASE
+        WHEN last_name IS NOT NULL THEN first_name || ' ' || last_name
+        ELSE first_name
+      END
+    ) STORED;
+  END IF;
+END $$;
+
+-- Migrate existing data: populate first_name from name if exists
+UPDATE public.contacts
+SET first_name = COALESCE(first_name, name, email, 'Contact')
+WHERE first_name IS NULL OR first_name = '';
+
+-- Add constraints
+DO $$
+BEGIN
+  -- Add check constraint for status if not exists
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'contacts_status_check') THEN
+    ALTER TABLE public.contacts ADD CONSTRAINT contacts_status_check
+      CHECK (status IN ('active', 'inactive', 'blocked', 'lead', 'customer', 'prospect'));
+  END IF;
+
+  -- Add check constraint for lifecycle_stage if not exists
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'contacts_lifecycle_stage_check') THEN
+    ALTER TABLE public.contacts ADD CONSTRAINT contacts_lifecycle_stage_check
+      CHECK (lifecycle_stage IN ('lead', 'prospect', 'customer', 'evangelist', 'other'));
+  END IF;
+
+  -- Add check constraint for lead_score if not exists
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'contacts_lead_score_check') THEN
+    ALTER TABLE public.contacts ADD CONSTRAINT contacts_lead_score_check
+      CHECK (lead_score >= 0 AND lead_score <= 100);
+  END IF;
+END $$;
 
 -- Create indexes for contacts
 CREATE INDEX IF NOT EXISTS idx_contacts_user_id ON public.contacts(user_id);

@@ -31,7 +31,7 @@ export default function DashboardLayout({
     const getUser = async () => {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
-      
+
       if (!user) {
         router.push('/login');
         return;
@@ -39,21 +39,33 @@ export default function DashboardLayout({
 
       setUser(user);
 
-      const { data: profileData } = await supabase
+      const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
         .single();
 
+      console.log('Dashboard Layout - User:', user.id);
+      console.log('Dashboard Layout - Profile Data:', profileData);
+      console.log('Dashboard Layout - Profile Error:', profileError);
+
       if (profileData) {
         setProfile(profileData);
-        
+
         // Check if user is inactive
         if (profileData.status === 'inactive' || profileData.status === 'suspended') {
           await supabase.auth.signOut();
           router.push('/login');
           return;
         }
+
+        // Redirect admin to admin dashboard
+        if (profileData.role === 'admin') {
+          router.push('/admin/dashboard');
+          return;
+        }
+      } else {
+        console.error('No profile found for user:', user.id);
       }
 
       setLoading(false);

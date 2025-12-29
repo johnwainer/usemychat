@@ -31,7 +31,7 @@ export default function AdminLayout({
     const getUser = async () => {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
-      
+
       if (!user) {
         router.push('/login');
         return;
@@ -39,20 +39,29 @@ export default function AdminLayout({
 
       setUser(user);
 
-      const { data: profileData } = await supabase
+      const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
         .single();
 
+      console.log('Admin Layout - User:', user.id);
+      console.log('Admin Layout - Profile Data:', profileData);
+      console.log('Admin Layout - Profile Error:', profileError);
+
       if (profileData) {
         // Check if user is admin
         if (profileData.role !== 'admin') {
+          console.log('User is not admin, redirecting to client dashboard');
           router.push('/dashboard');
           return;
         }
 
         setProfile(profileData);
+      } else {
+        console.error('No profile found for admin user:', user.id);
+        router.push('/dashboard');
+        return;
       }
 
       setLoading(false);

@@ -21,13 +21,21 @@ export default function Settings() {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
 
-      if (!user) return;
+      if (!user) {
+        console.error('Settings - No user found');
+        return;
+      }
 
-      const { data: profileData } = await supabase
+      console.log('Settings - Fetching profile for user:', user.id);
+
+      const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
         .single();
+
+      console.log('Settings - Profile Data:', profileData);
+      console.log('Settings - Profile Error:', profileError);
 
       if (profileData) {
         setProfile(profileData);
@@ -37,6 +45,8 @@ export default function Settings() {
           company: profileData.company || '',
           phone: profileData.phone || '',
         });
+      } else {
+        console.error('Settings - No profile data found');
       }
 
       setLoading(false);

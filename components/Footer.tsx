@@ -41,19 +41,19 @@ export default function Footer() {
             <h3 className="font-semibold text-black mb-4">Empresa</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/contacto" className="text-sm text-gray-600 hover:text-black transition-colors">
-                  Contacto
+                <Link href="/sobre-nosotros" className="text-sm text-gray-600 hover:text-black transition-colors">
+                  Sobre Nosotros
                 </Link>
               </li>
               <li>
-                <a href="#" className="text-sm text-gray-600 hover:text-black transition-colors">
-                  Sobre nosotros
-                </a>
+                <Link href="/blog" className="text-sm text-gray-600 hover:text-black transition-colors">
+                  Blog
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-sm text-gray-600 hover:text-black transition-colors">
-                  Blog
-                </a>
+                <Link href="/contacto" className="text-sm text-gray-600 hover:text-black transition-colors">
+                  Contacto
+                </Link>
               </li>
             </ul>
           </div>
@@ -62,19 +62,19 @@ export default function Footer() {
             <h3 className="font-semibold text-black mb-4">Legal</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-sm text-gray-600 hover:text-black transition-colors">
+                <Link href="/privacidad" className="text-sm text-gray-600 hover:text-black transition-colors">
                   Privacidad
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-sm text-gray-600 hover:text-black transition-colors">
+                <Link href="/terminos" className="text-sm text-gray-600 hover:text-black transition-colors">
                   Términos
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-sm text-gray-600 hover:text-black transition-colors">
+                <Link href="/cookies" className="text-sm text-gray-600 hover:text-black transition-colors">
                   Cookies
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

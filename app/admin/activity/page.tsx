@@ -27,6 +27,7 @@ export default function AdminActivityPage() {
   }, []);
 
   const fetchActivities = async () => {
+    const supabase = createClient();
     try {
       const { data, error } = await supabase
         .from('activity_logs')

@@ -1,16 +1,21 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Mail, Lock, User, Building, AlertCircle, Loader2, CheckCircle, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, User, Building, AlertCircle, Loader2, CheckCircle, ArrowLeft, Users } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
-export default function Register() {
+function RegisterForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get('redirect');
+  const invitationEmail = searchParams.get('email');
+  const isInvitation = redirect?.includes('/team/join/');
+
   const [formData, setFormData] = useState({
     fullName: '',
-    email: '',
+    email: invitationEmail || '',
     company: '',
     phone: '',
     password: '',
@@ -21,6 +26,11 @@ export default function Register() {
   const [success, setSuccess] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Don't allow email change if it's from an invitation
+    if (e.target.name === 'email' && isInvitation && invitationEmail) {
+      return;
+    }
+
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -75,7 +85,7 @@ export default function Register() {
             phone: formData.phone,
             role: 'client',
           },
-          emailRedirectTo: `${window.location.origin}/dashboard`,
+          emailRedirectTo: redirect ? `${window.location.origin}${redirect}` : `${window.location.origin}/dashboard`,
         },
       });
 
@@ -102,15 +112,19 @@ export default function Register() {
           await supabase.rpc('log_activity', {
             p_user_id: data.user.id,
             p_action: 'register',
-            p_metadata: { method: 'email' }
+            p_metadata: { method: 'email', from_invitation: isInvitation }
           });
         } catch (err) {
           console.error('Error logging activity:', err);
         }
 
-        // Redirect to dashboard after 2 seconds
+        // Redirect based on invitation or normal registration
         setTimeout(() => {
-          router.push('/dashboard');
+          if (redirect) {
+            router.push(redirect);
+          } else {
+            router.push('/dashboard');
+          }
           router.refresh();
         }, 2000);
       }
@@ -131,7 +145,7 @@ export default function Register() {
             ¡Cuenta creada exitosamente!
           </h2>
           <p className="text-gray-600 mb-8">
-            Redirigiendo a tu dashboard...
+            {isInvitation ? 'Redirigiendo a tu invitación...' : 'Redirigiendo a tu dashboard...'}
           </p>
           <div className="flex justify-center">
             <Loader2 className="w-8 h-8 animate-spin text-black" />
@@ -153,12 +167,32 @@ export default function Register() {
             <Link href="/" className="flex items-center justify-center mb-6">
               <span className="text-3xl font-bold text-black">UseMyChat</span>
             </Link>
+
+            {isInvitation && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <div className="flex items-start gap-3">
+                  <Users className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-blue-900 mb-1">
+                      Invitación de equipo
+                    </p>
+                    <p className="text-xs text-blue-700">
+                      Estás creando una cuenta para aceptar una invitación al equipo
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <h2 className="text-center text-3xl font-bold text-black">
-              Crea tu cuenta gratis
+              {isInvitation ? 'Crea tu cuenta para unirte' : 'Crea tu cuenta gratis'}
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
               ¿Ya tienes cuenta?{' '}
-              <Link href="/login" className="font-semibold text-black hover:underline">
+              <Link
+                href={redirect ? `/login?redirect=${encodeURIComponent(redirect)}${invitationEmail ? `&email=${encodeURIComponent(invitationEmail)}` : ''}` : '/login'}
+                className="font-semibold text-black hover:underline"
+              >
                 Inicia sesión
               </Link>
             </p>
@@ -194,7 +228,7 @@ export default function Register() {
 
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                  Email *
+                  Email * {isInvitation && invitationEmail && <span className="text-xs text-blue-600">(de la invitación)</span>}
                 </label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -206,10 +240,18 @@ export default function Register() {
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className="pl-10 w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all text-gray-900"
+                    readOnly={isInvitation && !!invitationEmail}
+                    className={`pl-10 w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all text-gray-900 ${
+                      isInvitation && invitationEmail ? 'bg-gray-50 cursor-not-allowed' : ''
+                    }`}
                     placeholder="tu@email.com"
                   />
                 </div>
+                {isInvitation && invitationEmail && (
+                  <p className="mt-1 text-xs text-gray-500">
+                    Este email no puede ser modificado porque viene de la invitación
+                  </p>
+                )}
               </div>
 
               <div>
@@ -420,5 +462,17 @@ export default function Register() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Register() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-black" />
+      </div>
+    }>
+      <RegisterForm />
+    </Suspense>
   );
 }

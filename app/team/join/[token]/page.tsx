@@ -269,16 +269,16 @@ export default function JoinTeamPage() {
           {!currentUser ? (
             <div className="space-y-3">
               <p className="text-center text-gray-600 mb-4">
-                Debes iniciar sesión para aceptar esta invitación
+                Debes iniciar sesión o crear una cuenta para aceptar esta invitación
               </p>
               <button
-                onClick={() => router.push(`/login?redirect=/team/join/${token}`)}
+                onClick={() => router.push(`/login?redirect=/team/join/${token}&email=${encodeURIComponent(invitation.email)}`)}
                 className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
               >
                 Iniciar Sesión
               </button>
               <button
-                onClick={() => router.push(`/register?redirect=/team/join/${token}`)}
+                onClick={() => router.push(`/register?redirect=/team/join/${token}&email=${encodeURIComponent(invitation.email)}`)}
                 className="w-full px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
               >
                 Crear Cuenta

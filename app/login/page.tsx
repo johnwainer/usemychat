@@ -1,14 +1,19 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Mail, Lock, AlertCircle, Loader2, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, AlertCircle, Loader2, ArrowLeft, Users } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
-export default function Login() {
+function LoginForm() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get('redirect');
+  const invitationEmail = searchParams.get('email');
+  const isInvitation = redirect?.includes('/team/join/');
+
+  const [email, setEmail] = useState(invitationEmail || '');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -43,7 +48,7 @@ export default function Login() {
         await supabase.rpc('log_activity', {
           p_user_id: data.user.id,
           p_action: 'login',
-          p_metadata: { method: 'email' }
+          p_metadata: { method: 'email', from_invitation: isInvitation }
         });
 
         // Get user profile to check role
@@ -60,8 +65,10 @@ export default function Login() {
           return;
         }
 
-        // Redirect based on role
-        if (profile?.role === 'admin') {
+        // Redirect based on invitation or role
+        if (redirect) {
+          router.push(redirect);
+        } else if (profile?.role === 'admin') {
           router.push('/admin/dashboard');
         } else {
           router.push('/dashboard');
@@ -87,12 +94,32 @@ export default function Login() {
             <Link href="/" className="flex items-center justify-center mb-6">
               <span className="text-3xl font-bold text-black">UseMyChat</span>
             </Link>
+
+            {isInvitation && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <div className="flex items-start gap-3">
+                  <Users className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-blue-900 mb-1">
+                      Invitación de equipo
+                    </p>
+                    <p className="text-xs text-blue-700">
+                      Inicia sesión para aceptar la invitación al equipo
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <h2 className="text-center text-3xl font-bold text-black">
-              Inicia sesión en tu cuenta
+              {isInvitation ? 'Inicia sesión para unirte' : 'Inicia sesión en tu cuenta'}
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
               ¿No tienes cuenta?{' '}
-              <Link href="/register" className="font-semibold text-black hover:underline">
+              <Link
+                href={redirect ? `/register?redirect=${encodeURIComponent(redirect)}${invitationEmail ? `&email=${encodeURIComponent(invitationEmail)}` : ''}` : '/register'}
+                className="font-semibold text-black hover:underline"
+              >
                 Regístrate gratis
               </Link>
             </p>
@@ -272,5 +299,17 @@ export default function Login() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Login() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-black" />
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 }

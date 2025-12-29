@@ -3,14 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { 
-  ArrowLeft, 
-  Mail, 
-  Phone, 
-  Building, 
-  Briefcase, 
-  Globe, 
-  MapPin, 
+import {
+  ArrowLeft,
+  Mail,
+  Phone,
+  Building,
+  Briefcase,
+  Globe,
+  MapPin,
   Calendar,
   Tag,
   Edit,
@@ -23,7 +23,7 @@ import {
   Instagram,
   Facebook,
   Linkedin,
-  Twitter,
+  Music,
   TrendingUp,
   Clock,
   User,
@@ -56,6 +56,7 @@ interface Contact {
   facebook: string | null;
   linkedin: string | null;
   twitter: string | null;
+  tiktok: string | null;
   status: string;
   lifecycle_stage: string;
   lead_score: number;
@@ -396,7 +397,7 @@ export default function ContactDetailPage() {
           </div>
 
           {/* Social Media */}
-          {(contact.whatsapp || contact.telegram || contact.instagram || contact.facebook || contact.linkedin || contact.twitter) && (
+          {(contact.whatsapp || contact.telegram || contact.instagram || contact.facebook || contact.linkedin || contact.twitter || contact.tiktok) && (
             <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Redes Sociales</h2>
               <div className="space-y-3">
@@ -436,9 +437,17 @@ export default function ContactDetailPage() {
                 )}
                 {contact.twitter && (
                   <div className="flex items-center gap-3 text-gray-700">
-                    <Twitter className="w-5 h-5 text-blue-400" />
-                    <a href={`https://twitter.com/${contact.twitter.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="hover:text-blue-600">
+                    <X className="w-5 h-5 text-gray-900" />
+                    <a href={`https://x.com/${contact.twitter.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="hover:text-blue-600">
                       {contact.twitter}
+                    </a>
+                  </div>
+                )}
+                {contact.tiktok && (
+                  <div className="flex items-center gap-3 text-gray-700">
+                    <Music className="w-5 h-5 text-gray-900" />
+                    <a href={`https://tiktok.com/@${contact.tiktok.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="hover:text-blue-600">
+                      {contact.tiktok}
                     </a>
                   </div>
                 )}

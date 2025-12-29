@@ -39,3 +39,16 @@ CREATE INDEX IF NOT EXISTS contacts_full_name_idx ON public.contacts(full_name);
 
 -- Add comment
 COMMENT ON COLUMN public.contacts.full_name IS 'Auto-generated from first_name and last_name. Used for display purposes.';
+
+-- Add TikTok column to contacts table
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public'
+    AND table_name = 'contacts'
+    AND column_name = 'tiktok'
+  ) THEN
+    ALTER TABLE public.contacts ADD COLUMN tiktok TEXT;
+  END IF;
+END $$;

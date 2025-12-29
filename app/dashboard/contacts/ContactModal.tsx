@@ -2,21 +2,21 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { 
-  X, 
-  User, 
-  Mail, 
-  Phone, 
-  Building, 
-  Briefcase, 
-  Globe, 
-  MapPin, 
+import {
+  X,
+  User,
+  Mail,
+  Phone,
+  Building,
+  Briefcase,
+  Globe,
+  MapPin,
   Tag,
   MessageSquare,
   Instagram,
   Facebook,
   Linkedin,
-  Twitter,
+  Music,
   Save,
   Loader2
 } from 'lucide-react';
@@ -41,6 +41,7 @@ interface ContactFormData {
   facebook: string;
   linkedin: string;
   twitter: string;
+  tiktok: string;
   status: string;
   lifecycle_stage: string;
   lead_score: number;
@@ -81,6 +82,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
     facebook: '',
     linkedin: '',
     twitter: '',
+    tiktok: '',
     status: 'active',
     lifecycle_stage: 'lead',
     lead_score: 0,
@@ -111,6 +113,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
         facebook: contact.facebook || '',
         linkedin: contact.linkedin || '',
         twitter: contact.twitter || '',
+        tiktok: contact.tiktok || '',
         status: contact.status || 'active',
         lifecycle_stage: contact.lifecycle_stage || 'lead',
         lead_score: contact.lead_score || 0,
@@ -175,6 +178,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
         facebook: formData.facebook || null,
         linkedin: formData.linkedin || null,
         twitter: formData.twitter || null,
+        tiktok: formData.tiktok || null,
         status: formData.status,
         lifecycle_stage: formData.lifecycle_stage,
         lead_score: formData.lead_score,
@@ -611,14 +615,31 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Twitter
+                    X (Twitter)
                   </label>
                   <div className="relative">
-                    <Twitter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <X className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <input
                       type="text"
                       name="twitter"
                       value={formData.twitter}
+                      onChange={handleChange}
+                      className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
+                      placeholder="@usuario"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    TikTok
+                  </label>
+                  <div className="relative">
+                    <Music className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                      type="text"
+                      name="tiktok"
+                      value={formData.tiktok}
                       onChange={handleChange}
                       className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                       placeholder="@usuario"

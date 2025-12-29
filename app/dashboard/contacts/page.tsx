@@ -64,6 +64,18 @@ export default function ContactsPage() {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.contact-menu')) {
+        setOpenMenuId(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
     fetchContacts();
     fetchStats();
   }, [statusFilter]);
@@ -444,41 +456,46 @@ export default function ContactsPage() {
                 )}
               </div>
 
-              <div className="absolute top-2 right-2">
+              <div className="absolute top-2 right-2 contact-menu">
                 <div className="relative">
                   <button
-                    onClick={() => setOpenMenuId(openMenuId === contact.id ? null : contact.id)}
-                    className="p-1 rounded-full bg-white shadow-md hover:bg-gray-50"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpenMenuId(openMenuId === contact.id ? null : contact.id);
+                    }}
+                    className="p-1.5 rounded-full bg-white shadow-md hover:bg-gray-50 transition-colors"
                   >
                     <MoreVertical className="w-4 h-4 text-gray-600" />
                   </button>
                   {openMenuId === contact.id && (
-                    <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10">
+                    <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-1 z-50">
                       <Link
                         href={`/dashboard/contacts/${contact.id}`}
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                         onClick={() => setOpenMenuId(null)}
                       >
                         <Eye className="w-4 h-4" />
                         Ver detalles
                       </Link>
                       <button
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           setSelectedContact(contact);
                           setShowContactModal(true);
                           setOpenMenuId(null);
                         }}
-                        className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 text-left transition-colors"
                       >
                         <Edit className="w-4 h-4" />
                         Editar
                       </button>
                       <button
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           handleDeleteContact(contact.id);
                           setOpenMenuId(null);
                         }}
-                        className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-50"
+                        className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 text-left transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
                         Eliminar

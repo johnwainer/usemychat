@@ -55,7 +55,6 @@ export default function Contacto() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log('Contact form:', formData);
       setSubmitted(true);
       setTimeout(() => {
         setSubmitted(false);

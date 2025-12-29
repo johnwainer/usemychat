@@ -17,6 +17,9 @@
 # misc
 .DS_Store
 *.pem
+*.key
+*.crt
+*.cert
 
 # debug
 npm-debug.log*
@@ -30,6 +33,7 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+.env.*.local
 
 # vercel
 .vercel
@@ -53,4 +57,22 @@ next-env.d.ts
 *~
 
 # OS
+.DS_Store
 Thumbs.db
+
+# Logs
+logs
+*.log
+
+# Temporary files
+tmp/
+temp/
+
+# Security & Secrets
+.env.*.key
+secrets/
+.aws/
+.ssh/
+*.gpg
+.vault/
+config/secrets.json

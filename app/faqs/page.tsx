@@ -121,21 +121,21 @@ export default function FAQs() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <nav className="fixed w-full bg-slate-900/80 backdrop-blur-md z-50 border-b border-purple-500/20">
+    <div className="min-h-screen bg-white">
+      <nav className="fixed w-full bg-white/80 backdrop-blur-md z-50 border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link href="/" className="flex items-center space-x-2">
-              <MessageSquare className="w-8 h-8 text-purple-400" />
-              <span className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              <MessageSquare className="w-8 h-8 text-black" />
+              <span className="text-2xl font-bold text-black">
                 UseMyChat
               </span>
             </Link>
             <div className="flex items-center space-x-4">
-              <Link href="/login" className="text-gray-300 hover:text-white transition-colors">
+              <Link href="/login" className="text-gray-600 hover:text-black transition-colors">
                 Iniciar Sesión
               </Link>
-              <Link href="/register" className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-full hover:shadow-lg hover:shadow-purple-500/50 transition-all">
+              <Link href="/register" className="bg-black text-white px-6 py-2 rounded-full hover:bg-gray-800 transition-all">
                 Registrarse
               </Link>
             </div>
@@ -150,15 +150,15 @@ export default function FAQs() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-16"
           >
-            <Link href="/" className="inline-flex items-center space-x-2 text-gray-300 hover:text-white mb-8 transition-colors">
+            <Link href="/" className="inline-flex items-center space-x-2 text-gray-600 hover:text-black mb-8 transition-colors">
               <ArrowLeft className="w-5 h-5" />
               <span>Volver al inicio</span>
             </Link>
-            
-            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+
+            <h1 className="text-5xl md:text-6xl font-bold text-black mb-6">
               Preguntas Frecuentes
             </h1>
-            <p className="text-xl text-gray-300">
+            <p className="text-xl text-gray-600">
               Encuentra respuestas a las preguntas más comunes sobre UseMyChat
             </p>
           </motion.div>
@@ -171,39 +171,39 @@ export default function FAQs() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: categoryIndex * 0.1 }}
               >
-                <h2 className="text-2xl font-bold text-white mb-4 flex items-center">
-                  <span className="w-2 h-8 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full mr-3"></span>
+                <h2 className="text-2xl font-bold text-black mb-4 flex items-center">
+                  <span className="w-2 h-8 bg-black rounded-full mr-3"></span>
                   {category.category}
                 </h2>
-                
+
                 <div className="space-y-3">
                   {category.questions.map((faq, faqIndex) => {
                     const itemId = `${categoryIndex}-${faqIndex}`;
                     const isOpen = openItems[itemId];
-                    
+
                     return (
                       <motion.div
                         key={faqIndex}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: (categoryIndex * 0.1) + (faqIndex * 0.05) }}
-                        className="bg-slate-800/50 backdrop-blur-xl rounded-xl border border-purple-500/20 overflow-hidden hover:border-purple-500/40 transition-all"
+                        className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:border-gray-300 hover:shadow-sm transition-all"
                       >
                         <button
                           onClick={() => toggleItem(itemId)}
-                          className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-slate-800/30 transition-colors"
+                          className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
                         >
-                          <span className="text-lg font-semibold text-white pr-4">
+                          <span className="text-lg font-semibold text-black pr-4">
                             {faq.q}
                           </span>
                           <motion.div
                             animate={{ rotate: isOpen ? 180 : 0 }}
                             transition={{ duration: 0.3 }}
                           >
-                            <ChevronDown className="w-5 h-5 text-purple-400 flex-shrink-0" />
+                            <ChevronDown className="w-5 h-5 text-gray-600 flex-shrink-0" />
                           </motion.div>
                         </button>
-                        
+
                         <AnimatePresence>
                           {isOpen && (
                             <motion.div
@@ -212,7 +212,7 @@ export default function FAQs() {
                               exit={{ height: 0, opacity: 0 }}
                               transition={{ duration: 0.3 }}
                             >
-                              <div className="px-6 pb-4 text-gray-300 leading-relaxed">
+                              <div className="px-6 pb-4 text-gray-600 leading-relaxed">
                                 {faq.a}
                               </div>
                             </motion.div>
@@ -230,23 +230,23 @@ export default function FAQs() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="mt-16 bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-xl rounded-2xl p-8 border border-purple-500/20 text-center"
+            className="mt-16 bg-gray-50 rounded-2xl p-8 border border-gray-200 text-center"
           >
-            <h3 className="text-2xl font-bold text-white mb-4">
+            <h3 className="text-2xl font-bold text-black mb-4">
               ¿No encontraste lo que buscabas?
             </h3>
-            <p className="text-gray-300 mb-6">
+            <p className="text-gray-600 mb-6">
               Nuestro equipo está listo para ayudarte con cualquier pregunta
             </p>
-            <Link href="/contacto" className="inline-flex items-center space-x-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all">
+            <Link href="/contacto" className="inline-flex items-center space-x-2 bg-black text-white px-8 py-3 rounded-full font-semibold hover:bg-gray-800 transition-all">
               <span>Contáctanos</span>
             </Link>
           </motion.div>
         </div>
       </div>
 
-      <footer className="bg-slate-900 border-t border-purple-500/20 py-8 px-4">
-        <div className="max-w-7xl mx-auto text-center text-gray-400">
+      <footer className="bg-white border-t border-gray-200 py-8 px-4">
+        <div className="max-w-7xl mx-auto text-center text-gray-600">
           <p>© 2024 UseMyChat. Todos los derechos reservados.</p>
         </div>
       </footer>

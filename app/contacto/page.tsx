@@ -78,21 +78,21 @@ export default function Contacto() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <nav className="fixed w-full bg-slate-900/80 backdrop-blur-md z-50 border-b border-purple-500/20">
+    <div className="min-h-screen bg-white">
+      <nav className="fixed w-full bg-white/80 backdrop-blur-md z-50 border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link href="/" className="flex items-center space-x-2">
-              <MessageSquare className="w-8 h-8 text-purple-400" />
-              <span className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              <MessageSquare className="w-8 h-8 text-black" />
+              <span className="text-2xl font-bold text-black">
                 UseMyChat
               </span>
             </Link>
             <div className="flex items-center space-x-4">
-              <Link href="/login" className="text-gray-300 hover:text-white transition-colors">
+              <Link href="/login" className="text-gray-600 hover:text-black transition-colors">
                 Iniciar Sesión
               </Link>
-              <Link href="/register" className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-full hover:shadow-lg hover:shadow-purple-500/50 transition-all">
+              <Link href="/register" className="bg-black text-white px-6 py-2 rounded-full hover:bg-gray-800 transition-all">
                 Registrarse
               </Link>
             </div>
@@ -107,15 +107,15 @@ export default function Contacto() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-16"
           >
-            <Link href="/" className="inline-flex items-center space-x-2 text-gray-300 hover:text-white mb-8 transition-colors">
+            <Link href="/" className="inline-flex items-center space-x-2 text-gray-600 hover:text-black mb-8 transition-colors">
               <ArrowLeft className="w-5 h-5" />
               <span>Volver al inicio</span>
             </Link>
-            
-            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+
+            <h1 className="text-5xl md:text-6xl font-bold text-black mb-6">
               Contáctanos
             </h1>
-            <p className="text-xl text-gray-300">
+            <p className="text-xl text-gray-600">
               Estamos aquí para ayudarte. Envíanos un mensaje y te responderemos pronto
             </p>
           </motion.div>
@@ -126,70 +126,70 @@ export default function Contacto() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <div className="bg-slate-800/50 backdrop-blur-xl rounded-2xl p-8 border border-purple-500/20 h-full">
-                <h2 className="text-3xl font-bold text-white mb-6">
+              <div className="bg-white rounded-2xl p-8 border border-gray-200 h-full">
+                <h2 className="text-3xl font-bold text-black mb-6">
                   Información de Contacto
                 </h2>
-                <p className="text-gray-300 mb-8">
+                <p className="text-gray-600 mb-8">
                   Nuestro equipo está disponible 24/7 para atender tus consultas
                 </p>
 
                 <div className="space-y-6">
                   <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0">
+                    <div className="w-12 h-12 rounded-xl bg-black flex items-center justify-center flex-shrink-0">
                       <Mail className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-white font-semibold mb-1">Email</h3>
-                      <p className="text-gray-400">contacto@usemychat.com</p>
-                      <p className="text-gray-400">soporte@usemychat.com</p>
+                      <h3 className="text-black font-semibold mb-1">Email</h3>
+                      <p className="text-gray-600">contacto@usemychat.com</p>
+                      <p className="text-gray-600">soporte@usemychat.com</p>
                     </div>
                   </div>
 
                   <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 flex items-center justify-center flex-shrink-0">
+                    <div className="w-12 h-12 rounded-xl bg-black flex items-center justify-center flex-shrink-0">
                       <Phone className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-white font-semibold mb-1">Teléfono</h3>
-                      <p className="text-gray-400">+1 (555) 123-4567</p>
-                      <p className="text-gray-400">Lun - Vie: 9:00 - 18:00</p>
+                      <h3 className="text-black font-semibold mb-1">Teléfono</h3>
+                      <p className="text-gray-600">+1 (555) 123-4567</p>
+                      <p className="text-gray-600">Lun - Vie: 9:00 - 18:00</p>
                     </div>
                   </div>
 
                   <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-indigo-500 to-blue-500 flex items-center justify-center flex-shrink-0">
+                    <div className="w-12 h-12 rounded-xl bg-black flex items-center justify-center flex-shrink-0">
                       <MessageCircle className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-white font-semibold mb-1">Chat en Vivo</h3>
-                      <p className="text-gray-400">Disponible 24/7</p>
-                      <p className="text-gray-400">Respuesta inmediata</p>
+                      <h3 className="text-black font-semibold mb-1">Chat en Vivo</h3>
+                      <p className="text-gray-600">Disponible 24/7</p>
+                      <p className="text-gray-600">Respuesta inmediata</p>
                     </div>
                   </div>
 
                   <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-cyan-500 to-teal-500 flex items-center justify-center flex-shrink-0">
+                    <div className="w-12 h-12 rounded-xl bg-black flex items-center justify-center flex-shrink-0">
                       <Building className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-white font-semibold mb-1">Oficina</h3>
-                      <p className="text-gray-400">123 Tech Street</p>
-                      <p className="text-gray-400">San Francisco, CA 94105</p>
+                      <h3 className="text-black font-semibold mb-1">Oficina</h3>
+                      <p className="text-gray-600">123 Tech Street</p>
+                      <p className="text-gray-600">San Francisco, CA 94105</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-8 pt-8 border-t border-purple-500/20">
-                  <h3 className="text-white font-semibold mb-4">Síguenos</h3>
+                <div className="mt-8 pt-8 border-t border-gray-200">
+                  <h3 className="text-black font-semibold mb-4">Síguenos</h3>
                   <div className="flex space-x-4">
                     {['twitter', 'linkedin', 'facebook', 'instagram'].map((social) => (
                       <a
                         key={social}
                         href="#"
-                        className="w-10 h-10 rounded-lg bg-slate-900/50 border border-purple-500/20 flex items-center justify-center hover:bg-slate-900 hover:border-purple-500/40 transition-all"
+                        className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center hover:bg-gray-100 hover:border-gray-300 transition-all"
                       >
-                        <span className="text-purple-400 capitalize">{social[0]}</span>
+                        <span className="text-black capitalize">{social[0]}</span>
                       </a>
                     ))}
                   </div>
@@ -202,8 +202,8 @@ export default function Contacto() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
             >
-              <div className="bg-slate-800/50 backdrop-blur-xl rounded-2xl p-8 border border-purple-500/20">
-                <h2 className="text-3xl font-bold text-white mb-6">
+              <div className="bg-white rounded-2xl p-8 border border-gray-200">
+                <h2 className="text-3xl font-bold text-black mb-6">
                   Envíanos un Mensaje
                 </h2>
 
@@ -213,16 +213,16 @@ export default function Contacto() {
                     animate={{ opacity: 1, scale: 1 }}
                     className="text-center py-12"
                   >
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center mx-auto mb-4">
+                    <div className="w-16 h-16 rounded-full bg-black flex items-center justify-center mx-auto mb-4">
                       <Send className="w-8 h-8 text-white" />
                     </div>
-                    <h3 className="text-2xl font-bold text-white mb-2">¡Mensaje Enviado!</h3>
-                    <p className="text-gray-300">Te responderemos pronto</p>
+                    <h3 className="text-2xl font-bold text-black mb-2">¡Mensaje Enviado!</h3>
+                    <p className="text-gray-600">Te responderemos pronto</p>
                   </motion.div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-5">
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
                         Nombre completo *
                       </label>
                       <div className="relative">
@@ -232,17 +232,17 @@ export default function Contacto() {
                           name="name"
                           value={formData.name}
                           onChange={handleChange}
-                          className="w-full bg-slate-900/50 border border-purple-500/20 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors"
+                          className="w-full bg-white border border-gray-200 rounded-lg pl-10 pr-4 py-3 text-black placeholder-gray-400 focus:outline-none focus:border-black transition-colors"
                           placeholder="Juan Pérez"
                         />
                       </div>
                       {errors.name && (
-                        <p className="mt-1 text-sm text-red-400">{errors.name}</p>
+                        <p className="mt-1 text-sm text-red-600">{errors.name}</p>
                       )}
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
                         Email *
                       </label>
                       <div className="relative">
@@ -252,18 +252,18 @@ export default function Contacto() {
                           name="email"
                           value={formData.email}
                           onChange={handleChange}
-                          className="w-full bg-slate-900/50 border border-purple-500/20 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors"
+                          className="w-full bg-white border border-gray-200 rounded-lg pl-10 pr-4 py-3 text-black placeholder-gray-400 focus:outline-none focus:border-black transition-colors"
                           placeholder="tu@empresa.com"
                         />
                       </div>
                       {errors.email && (
-                        <p className="mt-1 text-sm text-red-400">{errors.email}</p>
+                        <p className="mt-1 text-sm text-red-600">{errors.email}</p>
                       )}
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                           Empresa
                         </label>
                         <div className="relative">
@@ -273,14 +273,14 @@ export default function Contacto() {
                             name="company"
                             value={formData.company}
                             onChange={handleChange}
-                            className="w-full bg-slate-900/50 border border-purple-500/20 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors"
+                            className="w-full bg-white border border-gray-200 rounded-lg pl-10 pr-4 py-3 text-black placeholder-gray-400 focus:outline-none focus:border-black transition-colors"
                             placeholder="Mi Empresa"
                           />
                         </div>
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                           Teléfono
                         </label>
                         <div className="relative">
@@ -290,7 +290,7 @@ export default function Contacto() {
                             name="phone"
                             value={formData.phone}
                             onChange={handleChange}
-                            className="w-full bg-slate-900/50 border border-purple-500/20 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors"
+                            className="w-full bg-white border border-gray-200 rounded-lg pl-10 pr-4 py-3 text-black placeholder-gray-400 focus:outline-none focus:border-black transition-colors"
                             placeholder="+1 234 567"
                           />
                         </div>
@@ -298,14 +298,14 @@ export default function Contacto() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
                         Asunto
                       </label>
                       <select
                         name="subject"
                         value={formData.subject}
                         onChange={handleChange}
-                        className="w-full bg-slate-900/50 border border-purple-500/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-purple-500 transition-colors"
+                        className="w-full bg-white border border-gray-200 rounded-lg px-4 py-3 text-black focus:outline-none focus:border-black transition-colors"
                       >
                         <option value="">Selecciona un asunto</option>
                         <option value="ventas">Ventas</option>
@@ -317,7 +317,7 @@ export default function Contacto() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
                         Mensaje *
                       </label>
                       <textarea
@@ -325,11 +325,11 @@ export default function Contacto() {
                         value={formData.message}
                         onChange={handleChange}
                         rows={5}
-                        className="w-full bg-slate-900/50 border border-purple-500/20 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors resize-none"
+                        className="w-full bg-white border border-gray-200 rounded-lg px-4 py-3 text-black placeholder-gray-400 focus:outline-none focus:border-black transition-colors resize-none"
                         placeholder="Cuéntanos cómo podemos ayudarte..."
                       />
                       {errors.message && (
-                        <p className="mt-1 text-sm text-red-400">{errors.message}</p>
+                        <p className="mt-1 text-sm text-red-600">{errors.message}</p>
                       )}
                     </div>
 
@@ -337,7 +337,7 @@ export default function Contacto() {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       type="submit"
-                      className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all flex items-center justify-center space-x-2"
+                      className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-all flex items-center justify-center space-x-2"
                     >
                       <span>Enviar Mensaje</span>
                       <Send className="w-5 h-5" />
@@ -354,30 +354,30 @@ export default function Contacto() {
             transition={{ delay: 0.5 }}
             className="mt-12 grid md:grid-cols-3 gap-6"
           >
-            <div className="bg-slate-800/50 backdrop-blur-xl rounded-xl p-6 border border-purple-500/20 text-center">
-              <div className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
+            <div className="bg-white rounded-xl p-6 border border-gray-200 text-center">
+              <div className="text-4xl font-bold text-black mb-2">
                 &lt; 2min
               </div>
-              <p className="text-gray-300">Tiempo de respuesta promedio</p>
+              <p className="text-gray-600">Tiempo de respuesta promedio</p>
             </div>
-            <div className="bg-slate-800/50 backdrop-blur-xl rounded-xl p-6 border border-purple-500/20 text-center">
-              <div className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
+            <div className="bg-white rounded-xl p-6 border border-gray-200 text-center">
+              <div className="text-4xl font-bold text-black mb-2">
                 24/7
               </div>
-              <p className="text-gray-300">Soporte disponible</p>
+              <p className="text-gray-600">Soporte disponible</p>
             </div>
-            <div className="bg-slate-800/50 backdrop-blur-xl rounded-xl p-6 border border-purple-500/20 text-center">
-              <div className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
+            <div className="bg-white rounded-xl p-6 border border-gray-200 text-center">
+              <div className="text-4xl font-bold text-black mb-2">
                 98%
               </div>
-              <p className="text-gray-300">Satisfacción del cliente</p>
+              <p className="text-gray-600">Satisfacción del cliente</p>
             </div>
           </motion.div>
         </div>
       </div>
 
-      <footer className="bg-slate-900 border-t border-purple-500/20 py-8 px-4">
-        <div className="max-w-7xl mx-auto text-center text-gray-400">
+      <footer className="bg-white border-t border-gray-200 py-8 px-4">
+        <div className="max-w-7xl mx-auto text-center text-gray-600">
           <p>© 2024 UseMyChat. Todos los derechos reservados.</p>
         </div>
       </footer>

@@ -16,24 +16,24 @@ export async function POST(request: Request) {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
     const invitationLink = `${appUrl}/team/join/${token}`;
 
-    // Role descriptions in Spanish
-    const roleDescriptions: Record<string, string> = {
-      owner: 'Propietario - Control total del workspace',
-      admin: 'Administrador - Gestión completa del equipo',
-      supervisor: 'Supervisor - Supervisión de agentes',
-      agent: 'Agente - Gestión de contactos asignados',
-      viewer: 'Visualizador - Solo lectura'
+    // Role names in Spanish for email
+    const roleNames: Record<string, string> = {
+      owner: 'Propietario',
+      admin: 'Administrador',
+      supervisor: 'Supervisor',
+      agent: 'Agente',
+      viewer: 'Observador'
     };
 
-    const roleDescription = roleDescriptions[role] || role;
+    const roleName = roleNames[role] || role;
 
     // Send email using Supabase Auth
     const { error: emailError } = await supabase.auth.admin.inviteUserByEmail(email, {
       data: {
         invitation_type: 'team_member',
-        role: role,
+        role: roleName,
         invited_by: user.id,
-        inviter_name: inviterName,
+        inviter_name: inviterName || 'Un miembro del equipo',
         invitation_link: invitationLink
       },
       redirectTo: invitationLink

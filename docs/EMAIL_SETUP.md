@@ -100,9 +100,152 @@ Este documento explica cómo configurar el envío de emails para las invitacione
 2. **Reemplaza el contenido con:**
 
 ```html
-<h2>¡Has sido invitado a unirte a un equipo!</h2>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invitación a UseMyChat</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6;">
 
-<p>Hola,</p>
+  <!-- Container -->
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f3f4f6; padding: 40px 20px;">
+    <tr>
+      <td align="center">
+
+        <!-- Email Card -->
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 16px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); overflow: hidden;">
+
+          <!-- Header with Gradient -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); padding: 40px 40px 30px 40px; text-align: center;">
+              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">
+                UseMyChat
+              </h1>
+              <p style="margin: 10px 0 0 0; color: #E0E7FF; font-size: 14px; font-weight: 500;">
+                Sistema de Gestión de Conversaciones
+              </p>
+            </td>
+          </tr>
+
+          <!-- Main Content -->
+          <tr>
+            <td style="padding: 40px;">
+
+              <!-- Welcome Message -->
+              <div style="text-align: center; margin-bottom: 30px;">
+                <div style="display: inline-block; background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%); border-radius: 50%; width: 80px; height: 80px; line-height: 80px; margin-bottom: 20px;">
+                  <span style="font-size: 40px;">✉️</span>
+                </div>
+                <h2 style="margin: 0 0 10px 0; color: #1F2937; font-size: 24px; font-weight: 700;">
+                  ¡Has sido invitado!
+                </h2>
+                <p style="margin: 0; color: #6B7280; font-size: 16px; line-height: 1.5;">
+                  Únete al equipo y comienza a colaborar
+                </p>
+              </div>
+
+              <!-- Invitation Details -->
+              <div style="background: linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 100%); border-left: 4px solid #3B82F6; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+                <p style="margin: 0 0 12px 0; color: #374151; font-size: 15px; line-height: 1.6;">
+                  <strong style="color: #1F2937;">{{ .Data.inviter_name }}</strong> te ha invitado a unirte a su equipo en <strong style="color: #3B82F6;">UseMyChat</strong>.
+                </p>
+                <div style="background: #ffffff; border-radius: 6px; padding: 12px 16px; margin-top: 12px;">
+                  <p style="margin: 0; color: #6B7280; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+                    Tu rol asignado
+                  </p>
+                  <p style="margin: 8px 0 0 0; color: #1F2937; font-size: 18px; font-weight: 700;">
+                    {{ .Data.role }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- CTA Button -->
+              <div style="text-align: center; margin: 35px 0;">
+                <a href="{{ .Data.invitation_link }}"
+                   style="display: inline-block; background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 12px; font-weight: 700; font-size: 16px; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4); transition: all 0.3s ease;">
+                  Aceptar Invitación →
+                </a>
+              </div>
+
+              <!-- Alternative Link -->
+              <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; margin: 25px 0;">
+                <p style="margin: 0 0 10px 0; color: #6B7280; font-size: 13px; font-weight: 600;">
+                  ¿No funciona el botón? Copia este enlace:
+                </p>
+                <p style="margin: 0; color: #3B82F6; font-size: 12px; word-break: break-all; font-family: 'Courier New', monospace;">
+                  {{ .Data.invitation_link }}
+                </p>
+              </div>
+
+              <!-- Info Boxes -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-top: 30px;">
+                <tr>
+                  <td width="48%" style="vertical-align: top;">
+                    <div style="background: #FEF3C7; border-left: 3px solid #F59E0B; border-radius: 6px; padding: 12px;">
+                      <p style="margin: 0; color: #92400E; font-size: 13px; line-height: 1.5;">
+                        ⏰ <strong>Expira en 7 días</strong><br>
+                        <span style="font-size: 12px;">Acepta pronto la invitación</span>
+                      </p>
+                    </div>
+                  </td>
+                  <td width="4%"></td>
+                  <td width="48%" style="vertical-align: top;">
+                    <div style="background: #DBEAFE; border-left: 3px solid #3B82F6; border-radius: 6px; padding: 12px;">
+                      <p style="margin: 0; color: #1E40AF; font-size: 13px; line-height: 1.5;">
+                        🔒 <strong>Enlace seguro</strong><br>
+                        <span style="font-size: 12px;">Solo tú puedes usarlo</span>
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Divider -->
+              <div style="border-top: 1px solid #E5E7EB; margin: 30px 0;"></div>
+
+              <!-- Security Notice -->
+              <div style="text-align: center;">
+                <p style="margin: 0; color: #9CA3AF; font-size: 13px; line-height: 1.6;">
+                  Si no esperabas este correo, puedes ignorarlo de forma segura.<br>
+                  No se realizará ninguna acción en tu cuenta.
+                </p>
+              </div>
+
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background: #F9FAFB; padding: 30px 40px; text-align: center; border-top: 1px solid #E5E7EB;">
+              <p style="margin: 0 0 10px 0; color: #6B7280; font-size: 14px; font-weight: 600;">
+                UseMyChat
+              </p>
+              <p style="margin: 0 0 15px 0; color: #9CA3AF; font-size: 12px;">
+                Gestión inteligente de conversaciones y equipos
+              </p>
+              <div style="margin: 15px 0;">
+                <a href="{{ .SiteURL }}" style="color: #3B82F6; text-decoration: none; font-size: 12px; margin: 0 10px;">Inicio</a>
+                <span style="color: #D1D5DB;">•</span>
+                <a href="{{ .SiteURL }}/sobre-nosotros" style="color: #3B82F6; text-decoration: none; font-size: 12px; margin: 0 10px;">Sobre Nosotros</a>
+                <span style="color: #D1D5DB;">•</span>
+                <a href="{{ .SiteURL }}/contacto" style="color: #3B82F6; text-decoration: none; font-size: 12px; margin: 0 10px;">Soporte</a>
+              </div>
+              <p style="margin: 15px 0 0 0; color: #9CA3AF; font-size: 11px;">
+                © 2024 UseMyChat. Todos los derechos reservados.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>
 
 <p><strong>{{ .Data.inviter_name }}</strong> te ha invitado a unirte a su equipo en UseMyChat.</p>
 
@@ -194,79 +337,201 @@ En Supabase Dashboard → Settings → Authentication:
 - `{{ .Data.inviter_name }}` - Nombre de quien invita
 - `{{ .Data.role }}` - Rol asignado
 - `{{ .Data.invitation_link }}` - Enlace de invitación
+- `{{ .SiteURL }}` - URL del sitio
 - `{{ .ConfirmationURL }}` - URL de confirmación (alternativa)
 
-### Ejemplo de Plantilla Avanzada
+### Colores de UseMyChat
+
+Para mantener consistencia con la marca:
+
+```css
+/* Colores principales */
+Azul primario: #3B82F6
+Azul oscuro: #2563EB
+Azul claro: #DBEAFE
+Azul muy claro: #EFF6FF
+
+/* Colores de texto */
+Texto oscuro: #1F2937
+Texto medio: #6B7280
+Texto claro: #9CA3AF
+
+/* Colores de fondo */
+Fondo claro: #F9FAFB
+Fondo gris: #F3F4F6
+Bordes: #E5E7EB
+
+/* Colores de estado */
+Amarillo: #F59E0B (advertencia)
+Verde: #10B981 (éxito)
+Rojo: #EF4444 (error)
+```
+
+### Versión Simplificada (Sin tablas HTML)
+
+Si prefieres una versión más simple sin tablas HTML:
 
 ```html
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Invitación a UseMyChat</title>
 </head>
-<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-  
-  <!-- Header -->
-  <div style="text-align: center; padding: 20px 0; border-bottom: 3px solid #3B82F6;">
-    <h1 style="color: #3B82F6; margin: 0;">UseMyChat</h1>
-  </div>
+<body style="margin: 0; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f3f4f6;">
 
-  <!-- Content -->
-  <div style="padding: 30px 0;">
-    <h2 style="color: #1F2937; margin-bottom: 20px;">¡Has sido invitado!</h2>
-    
-    <p style="font-size: 16px; color: #4B5563;">
-      <strong style="color: #1F2937;">{{ .Data.inviter_name }}</strong> te ha invitado a unirte a su equipo en UseMyChat.
-    </p>
+  <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
 
-    <!-- Role Badge -->
-    <div style="background: #EFF6FF; border-left: 4px solid #3B82F6; padding: 15px; margin: 20px 0; border-radius: 4px;">
-      <p style="margin: 0; color: #1E40AF;">
-        <strong>Tu rol:</strong> {{ .Data.role }}
-      </p>
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); padding: 40px; text-align: center;">
+      <h1 style="margin: 0; color: white; font-size: 28px;">UseMyChat</h1>
+      <p style="margin: 10px 0 0; color: #E0E7FF; font-size: 14px;">Sistema de Gestión de Conversaciones</p>
     </div>
 
-    <!-- CTA Button -->
-    <div style="text-align: center; margin: 30px 0;">
-      <a href="{{ .Data.invitation_link }}" 
-         style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);">
-        Aceptar Invitación →
-      </a>
+    <!-- Content -->
+    <div style="padding: 40px;">
+
+      <!-- Icon -->
+      <div style="text-align: center; margin-bottom: 30px;">
+        <div style="display: inline-block; background: linear-gradient(135deg, #EFF6FF, #DBEAFE); border-radius: 50%; width: 80px; height: 80px; line-height: 80px; font-size: 40px;">
+          ✉️
+        </div>
+        <h2 style="margin: 20px 0 10px; color: #1F2937; font-size: 24px;">¡Has sido invitado!</h2>
+        <p style="margin: 0; color: #6B7280;">Únete al equipo y comienza a colaborar</p>
+      </div>
+
+      <!-- Details -->
+      <div style="background: linear-gradient(135deg, #F9FAFB, #F3F4F6); border-left: 4px solid #3B82F6; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+        <p style="margin: 0 0 12px; color: #374151; font-size: 15px;">
+          <strong>{{ .Data.inviter_name }}</strong> te ha invitado a unirte a su equipo en <strong style="color: #3B82F6;">UseMyChat</strong>.
+        </p>
+        <div style="background: white; border-radius: 6px; padding: 12px; margin-top: 12px;">
+          <p style="margin: 0; color: #6B7280; font-size: 13px; font-weight: 600; text-transform: uppercase;">Tu rol asignado</p>
+          <p style="margin: 8px 0 0; color: #1F2937; font-size: 18px; font-weight: 700;">{{ .Data.role }}</p>
+        </div>
+      </div>
+
+      <!-- Button -->
+      <div style="text-align: center; margin: 35px 0;">
+        <a href="{{ .Data.invitation_link }}"
+           style="display: inline-block; background: linear-gradient(135deg, #3B82F6, #2563EB); color: white; text-decoration: none; padding: 16px 40px; border-radius: 12px; font-weight: 700; font-size: 16px; box-shadow: 0 4px 12px rgba(59,130,246,0.4);">
+          Aceptar Invitación →
+        </a>
+      </div>
+
+      <!-- Alternative Link -->
+      <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; margin: 25px 0;">
+        <p style="margin: 0 0 10px; color: #6B7280; font-size: 13px; font-weight: 600;">¿No funciona el botón? Copia este enlace:</p>
+        <p style="margin: 0; color: #3B82F6; font-size: 12px; word-break: break-all;">{{ .Data.invitation_link }}</p>
+      </div>
+
+      <!-- Info -->
+      <div style="display: flex; gap: 10px; margin-top: 30px;">
+        <div style="flex: 1; background: #FEF3C7; border-left: 3px solid #F59E0B; border-radius: 6px; padding: 12px;">
+          <p style="margin: 0; color: #92400E; font-size: 13px;">⏰ <strong>Expira en 7 días</strong></p>
+        </div>
+        <div style="flex: 1; background: #DBEAFE; border-left: 3px solid #3B82F6; border-radius: 6px; padding: 12px;">
+          <p style="margin: 0; color: #1E40AF; font-size: 13px;">🔒 <strong>Enlace seguro</strong></p>
+        </div>
+      </div>
+
+      <!-- Security Notice -->
+      <p style="margin: 30px 0 0; padding-top: 30px; border-top: 1px solid #E5E7EB; color: #9CA3AF; font-size: 13px; text-align: center;">
+        Si no esperabas este correo, puedes ignorarlo de forma segura.
+      </p>
+
     </div>
 
-    <!-- Alternative Link -->
-    <div style="background: #F9FAFB; padding: 15px; border-radius: 8px; margin: 20px 0;">
-      <p style="margin: 0 0 10px 0; font-size: 14px; color: #6B7280;">
-        O copia y pega este enlace en tu navegador:
-      </p>
-      <p style="margin: 0; font-size: 12px; color: #9CA3AF; word-break: break-all;">
-        {{ .Data.invitation_link }}
-      </p>
+    <!-- Footer -->
+    <div style="background: #F9FAFB; padding: 30px; text-align: center; border-top: 1px solid #E5E7EB;">
+      <p style="margin: 0 0 10px; color: #6B7280; font-size: 14px; font-weight: 600;">UseMyChat</p>
+      <p style="margin: 0 0 15px; color: #9CA3AF; font-size: 12px;">Gestión inteligente de conversaciones y equipos</p>
+      <p style="margin: 0; color: #9CA3AF; font-size: 11px;">© 2024 UseMyChat. Todos los derechos reservados.</p>
     </div>
 
-    <!-- Expiration Notice -->
-    <p style="font-size: 14px; color: #6B7280; margin-top: 30px;">
-      ⏰ Esta invitación expirará en <strong>7 días</strong>.
-    </p>
-
-    <!-- Security Notice -->
-    <p style="font-size: 13px; color: #9CA3AF; margin-top: 20px; padding-top: 20px; border-top: 1px solid #E5E7EB;">
-      Si no esperabas este email, puedes ignorarlo de forma segura. No se realizará ninguna acción en tu cuenta.
-    </p>
-  </div>
-
-  <!-- Footer -->
-  <div style="text-align: center; padding: 20px 0; border-top: 1px solid #E5E7EB; color: #9CA3AF; font-size: 12px;">
-    <p style="margin: 0;">
-      © 2024 UseMyChat. Todos los derechos reservados.
-    </p>
   </div>
 
 </body>
 </html>
 ```
+
+### Versión Minimalista
+
+Para clientes de email que no soportan estilos complejos:
+
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Invitación a UseMyChat</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+
+  <div style="background: #3B82F6; color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+    <h1 style="margin: 0; font-size: 24px;">UseMyChat</h1>
+  </div>
+
+  <div style="background: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px;">
+
+    <h2 style="color: #1F2937; margin-top: 0;">¡Has sido invitado!</h2>
+
+    <p><strong>{{ .Data.inviter_name }}</strong> te ha invitado a unirte a su equipo en UseMyChat.</p>
+
+    <div style="background: white; border-left: 4px solid #3B82F6; padding: 15px; margin: 20px 0;">
+      <p style="margin: 0;"><strong>Tu rol:</strong> {{ .Data.role }}</p>
+    </div>
+
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="{{ .Data.invitation_link }}"
+         style="display: inline-block; background: #3B82F6; color: white; text-decoration: none; padding: 14px 30px; border-radius: 6px; font-weight: bold;">
+        Aceptar Invitación
+      </a>
+    </div>
+
+    <p style="font-size: 14px; color: #666;">
+      O copia este enlace en tu navegador:<br>
+      <span style="color: #3B82F6; word-break: break-all;">{{ .Data.invitation_link }}</span>
+    </p>
+
+    <p style="font-size: 13px; color: #999; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+      Esta invitación expirará en 7 días. Si no esperabas este correo, puedes ignorarlo.
+    </p>
+
+  </div>
+
+  <div style="text-align: center; padding: 20px; color: #999; font-size: 12px;">
+    <p>© 2024 UseMyChat. Todos los derechos reservados.</p>
+  </div>
+
+</body>
+</html>
+```
+
+### Tips de Diseño
+
+1. **Usa tablas HTML para mejor compatibilidad**
+   - Outlook y otros clientes antiguos no soportan bien flexbox/grid
+   - Las tablas garantizan mejor renderizado
+
+2. **Estilos inline siempre**
+   - No uses `<style>` tags o CSS externo
+   - Todos los estilos deben estar inline
+
+3. **Colores seguros**
+   - Usa colores hexadecimales (#3B82F6)
+   - Evita rgba() o variables CSS
+
+4. **Imágenes**
+   - Usa URLs absolutas
+   - Incluye alt text
+   - Ten un fallback si no cargan
+
+5. **Testing**
+   - Prueba en Gmail, Outlook, Apple Mail
+   - Usa herramientas como Litmus o Email on Acid
+   - Verifica en móvil y desktop
 
 ---
 

@@ -73,11 +73,18 @@ export default function Register() {
             company: formData.company,
             role: 'client',
           },
+          emailRedirectTo: `${window.location.origin}/dashboard`,
         },
       });
 
       if (signUpError) {
-        setError(signUpError.message);
+        let errorMessage = signUpError.message;
+
+        if (errorMessage.includes('invalid') || errorMessage.includes('not authorized')) {
+          errorMessage = 'Error de configuración: Por favor contacta al administrador. El sistema de emails necesita ser configurado en Supabase (Authentication → Providers → Email → desactiva "Confirm email" o configura SMTP).';
+        }
+
+        setError(errorMessage);
         setLoading(false);
         return;
       }

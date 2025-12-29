@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase/client';
 import { Settings, User, Mail, Building2, Phone, Save, Shield } from 'lucide-react';
 
 export default function AdminSettingsPage() {
@@ -14,7 +14,6 @@ export default function AdminSettingsPage() {
     company: '',
     phone: ''
   });
-  const supabase = createClientComponentClient();
 
   useEffect(() => {
     fetchProfile();
@@ -51,6 +50,7 @@ export default function AdminSettingsPage() {
     setSaving(true);
     setMessage(null);
 
+    const supabase = createClient();
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('No user found');

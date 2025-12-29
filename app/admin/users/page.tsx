@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase/client';
 import { Users, Search, Filter, MoreVertical, CheckCircle, XCircle, Clock, Mail, Phone, Building2 } from 'lucide-react';
 
 interface UserProfile {
@@ -47,6 +47,7 @@ export default function AdminUsersPage() {
   };
 
   const updateUserStatus = async (userId: string, newStatus: 'active' | 'inactive' | 'suspended') => {
+    const supabase = createClient();
     try {
       const { error } = await supabase
         .from('profiles')
@@ -61,7 +62,7 @@ export default function AdminUsersPage() {
         p_details: { new_status: newStatus }
       });
 
-      setUsers(users.map(user => 
+      setUsers(users.map(user =>
         user.id === userId ? { ...user, status: newStatus } : user
       ));
     } catch (error) {

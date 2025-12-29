@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase/client';
 import { BarChart3, TrendingUp, Users, MessageSquare, Calendar, Activity } from 'lucide-react';
 
 interface Stats {
@@ -25,7 +25,6 @@ export default function AdminStatsPage() {
     conversationsThisMonth: 0
   });
   const [loading, setLoading] = useState(true);
-  const supabase = createClientComponentClient();
 
   useEffect(() => {
     fetchStats();

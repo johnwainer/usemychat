@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase/client';
 import { Activity, Filter, Calendar, User, FileText, Search } from 'lucide-react';
 
 interface ActivityLog {
@@ -21,7 +21,6 @@ export default function AdminActivityPage() {
   const [loading, setLoading] = useState(true);
   const [filterAction, setFilterAction] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const supabase = createClientComponentClient();
 
   useEffect(() => {
     fetchActivities();

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { MessageSquare, Mail, User, Building, Phone, MessageCircle, ArrowLeft, Send } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+import Footer from '@/components/Footer';
 
 export default function Contacto() {
   const [formData, setFormData] = useState({
@@ -376,11 +377,7 @@ export default function Contacto() {
         </div>
       </div>
 
-      <footer className="bg-white border-t border-gray-200 py-8 px-4">
-        <div className="max-w-7xl mx-auto text-center text-gray-600">
-          <p>© 2024 UseMyChat. Todos los derechos reservados.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

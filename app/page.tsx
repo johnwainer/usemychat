@@ -1,10 +1,15 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { MessageSquare, Zap, Users, BarChart3, Bot, Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
+import Footer from '@/components/Footer';
 
 export default function Home() {
+  const { scrollYProgress } = useScroll();
+  const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+  const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
+
   return (
     <div className="min-h-screen bg-white">
       <nav className="fixed w-full bg-white/80 backdrop-blur-md z-50 border-b border-gray-200">
@@ -36,78 +41,125 @@ export default function Home() {
         </div>
       </nav>
 
-      <section className="pt-32 pb-20 px-4">
+      <section className="pt-32 pb-20 px-4 relative overflow-hidden">
+        <motion.div
+          className="absolute inset-0 -z-10"
+          style={{ opacity }}
+        >
+          <div className="absolute top-20 left-10 w-72 h-72 bg-gray-100 rounded-full blur-3xl opacity-50" />
+          <div className="absolute top-40 right-10 w-96 h-96 bg-gray-100 rounded-full blur-3xl opacity-50" />
+        </motion.div>
+
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             className="text-center"
+            style={{ scale }}
           >
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: "spring" }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
               className="inline-block mb-4"
             >
-              <span className="bg-gray-100 text-gray-900 px-4 py-2 rounded-full text-sm font-medium border border-gray-200">
-                🚀 La Revolución en Gestión de Conversaciones
-              </span>
+              <motion.span
+                className="bg-gray-100 text-gray-900 px-4 py-2 rounded-full text-sm font-medium border border-gray-200 inline-flex items-center space-x-2"
+                whileHover={{ scale: 1.05 }}
+              >
+                <motion.span
+                  animate={{ rotate: [0, 10, -10, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+                >
+                  🚀
+                </motion.span>
+                <span>La Revolución en Gestión de Conversaciones</span>
+              </motion.span>
             </motion.div>
 
-            <h1 className="text-5xl md:text-7xl font-bold text-black mb-6">
+            <motion.h1
+              className="text-5xl md:text-7xl font-bold text-black mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
               Gestiona todas tus
-              <span className="text-gray-600"> conversaciones </span>
+              <motion.span
+                className="text-gray-600"
+                animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 3, repeat: Infinity }}
+              >
+                {" "}conversaciones{" "}
+              </motion.span>
               en un solo lugar
-            </h1>
+            </motion.h1>
 
-            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+            <motion.p
+              className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
               Plataforma omnicanal con IA integrada para WhatsApp, Instagram, Facebook y más.
               Automatiza, analiza y convierte con el poder de la inteligencia artificial.
-            </p>
+            </motion.p>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
+              transition={{ delay: 0.6 }}
               className="flex flex-col sm:flex-row gap-4 justify-center items-center"
             >
-              <Link href="/register" className="group bg-black text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-800 transition-all flex items-center space-x-2">
-                <span>Comenzar Gratis</span>
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link href="/contacto" className="bg-white text-black px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-50 transition-all border border-gray-200">
-                Ver Demo
-              </Link>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Link href="/register" className="group bg-black text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-800 transition-all flex items-center space-x-2">
+                  <span>Comenzar Gratis</span>
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Link href="/contacto" className="bg-white text-black px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-50 transition-all border border-gray-200">
+                  Ver Demo
+                </Link>
+              </motion.div>
             </motion.div>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.8 }}
+            transition={{ delay: 0.8, duration: 0.8 }}
             className="mt-20"
           >
-            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+            <motion.div
+              className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm"
+              whileHover={{ boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)" }}
+              transition={{ duration: 0.3 }}
+            >
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                <div>
-                  <div className="text-4xl font-bold text-black">99.9%</div>
-                  <div className="text-gray-600 mt-2">Uptime</div>
-                </div>
-                <div>
-                  <div className="text-4xl font-bold text-black">10K+</div>
-                  <div className="text-gray-600 mt-2">Usuarios</div>
-                </div>
-                <div>
-                  <div className="text-4xl font-bold text-black">50M+</div>
-                  <div className="text-gray-600 mt-2">Mensajes</div>
-                </div>
-                <div>
-                  <div className="text-4xl font-bold text-black">24/7</div>
-                  <div className="text-gray-600 mt-2">Soporte</div>
-                </div>
+                {[
+                  { value: "99.9%", label: "Uptime" },
+                  { value: "10K+", label: "Usuarios" },
+                  { value: "50M+", label: "Mensajes" },
+                  { value: "24/7", label: "Soporte" }
+                ].map((stat, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 1 + index * 0.1, type: "spring" }}
+                  >
+                    <motion.div
+                      className="text-4xl font-bold text-black"
+                      whileHover={{ scale: 1.1 }}
+                    >
+                      {stat.value}
+                    </motion.div>
+                    <div className="text-gray-600 mt-2">{stat.label}</div>
+                  </motion.div>
+                ))}
               </div>
-            </div>
+            </motion.div>
           </motion.div>
         </div>
       </section>
@@ -120,12 +172,23 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-black mb-4">
+            <motion.h2
+              className="text-4xl md:text-5xl font-bold text-black mb-4"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
               Funcionalidades Potentes
-            </h2>
-            <p className="text-xl text-gray-600">
+            </motion.h2>
+            <motion.p
+              className="text-xl text-gray-600"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+            >
               Todo lo que necesitas para gestionar tus conversaciones
-            </p>
+            </motion.p>
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -167,12 +230,16 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                whileHover={{ scale: 1.02 }}
-                className="bg-white rounded-2xl p-8 border border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all cursor-pointer"
+                whileHover={{ scale: 1.05, y: -5 }}
+                className="bg-white rounded-2xl p-8 border border-gray-200 hover:border-gray-300 hover:shadow-xl transition-all cursor-pointer"
               >
-                <div className="w-14 h-14 rounded-xl bg-black flex items-center justify-center mb-4">
+                <motion.div
+                  className="w-14 h-14 rounded-xl bg-black flex items-center justify-center mb-4"
+                  whileHover={{ rotate: 360 }}
+                  transition={{ duration: 0.6 }}
+                >
                   <feature.icon className="w-7 h-7 text-white" />
-                </div>
+                </motion.div>
                 <h3 className="text-2xl font-bold text-black mb-3">{feature.title}</h3>
                 <p className="text-gray-600">{feature.description}</p>
               </motion.div>
@@ -199,90 +266,90 @@ export default function Home() {
 
           <div className="grid md:grid-cols-2 gap-8">
             {[
-              "Integración en minutos, no días",
-              "IA que aprende de tu negocio",
-              "Escalable para cualquier tamaño",
-              "Seguridad de nivel empresarial",
-              "Soporte 24/7 en español",
-              "Actualizaciones constantes"
-            ].map((benefit, index) => (
+              {
+                title: "Fácil de usar",
+                description: "Interfaz intuitiva que no requiere capacitación técnica",
+                benefits: ["Setup en minutos", "Onboarding guiado", "Soporte 24/7"]
+              },
+              {
+                title: "Escalable",
+                description: "Crece con tu negocio sin límites",
+                benefits: ["Usuarios ilimitados", "Mensajes ilimitados", "Integraciones infinitas"]
+              },
+              {
+                title: "Seguro",
+                description: "Tus datos protegidos con los más altos estándares",
+                benefits: ["Encriptación E2E", "Cumplimiento GDPR", "Backups automáticos"]
+              },
+              {
+                title: "Inteligente",
+                description: "IA que aprende de tus conversaciones",
+                benefits: ["Respuestas automáticas", "Análisis de sentimiento", "Predicciones de ventas"]
+              }
+            ].map((item, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="flex items-center space-x-4 bg-gray-50 rounded-xl p-6 border border-gray-200"
+                whileHover={{ scale: 1.02 }}
+                className="bg-gray-50 rounded-2xl p-8 border border-gray-200"
               >
-                <CheckCircle2 className="w-6 h-6 text-black flex-shrink-0" />
-                <span className="text-lg text-black">{benefit}</span>
+                <h3 className="text-2xl font-bold text-black mb-3">{item.title}</h3>
+                <p className="text-gray-600 mb-6">{item.description}</p>
+                <ul className="space-y-3">
+                  {item.benefits.map((benefit, i) => (
+                    <motion.li
+                      key={i}
+                      initial={{ opacity: 0, x: -10 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.1 + i * 0.1 }}
+                      className="flex items-center space-x-2"
+                    >
+                      <CheckCircle2 className="w-5 h-5 text-black flex-shrink-0" />
+                      <span className="text-gray-700">{benefit}</span>
+                    </motion.li>
+                  ))}
+                </ul>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-20 px-4 bg-gray-50">
+      <section className="py-20 px-4 bg-black text-white">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-black rounded-3xl p-12 shadow-xl"
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              ¿Listo para transformar tu negocio?
-            </h2>
+            <motion.h2
+              className="text-4xl md:text-5xl font-bold mb-6"
+              animate={{ scale: [1, 1.02, 1] }}
+              transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+            >
+              Comienza hoy mismo
+            </motion.h2>
             <p className="text-xl text-gray-300 mb-8">
               Únete a miles de empresas que ya confían en UseMyChat
             </p>
-            <Link href="/register" className="inline-flex items-center space-x-2 bg-white text-black px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-100 transition-all">
-              <span>Comenzar Ahora</span>
-              <ArrowRight className="w-5 h-5" />
-            </Link>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Link href="/register" className="inline-flex items-center space-x-2 bg-white text-black px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-100 transition-all">
+                <span>Prueba gratis por 14 días</span>
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+            </motion.div>
+            <p className="text-gray-400 mt-4 text-sm">
+              No requiere tarjeta de crédito • Cancela cuando quieras
+            </p>
           </motion.div>
         </div>
       </section>
 
-      <footer className="bg-white border-t border-gray-200 py-12 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <MessageSquare className="w-6 h-6 text-black" />
-                <span className="text-xl font-bold text-black">UseMyChat</span>
-              </div>
-              <p className="text-gray-600">
-                La plataforma omnicanal con IA para gestionar todas tus conversaciones.
-              </p>
-            </div>
-            <div>
-              <h4 className="text-black font-semibold mb-4">Producto</h4>
-              <ul className="space-y-2">
-                <li><Link href="/faqs" className="text-gray-600 hover:text-black transition-colors">FAQs</Link></li>
-                <li><Link href="/contacto" className="text-gray-600 hover:text-black transition-colors">Contacto</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-black font-semibold mb-4">Empresa</h4>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-600 hover:text-black transition-colors">Sobre Nosotros</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-black transition-colors">Blog</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-black font-semibold mb-4">Legal</h4>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-600 hover:text-black transition-colors">Privacidad</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-black transition-colors">Términos</a></li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-200 pt-8 text-center text-gray-600">
-            <p>© 2024 UseMyChat. Todos los derechos reservados.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

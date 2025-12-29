@@ -71,6 +71,7 @@ export default function Register() {
           data: {
             full_name: formData.fullName,
             company: formData.company,
+            phone: formData.phone,
             role: 'client',
           },
           emailRedirectTo: `${window.location.origin}/dashboard`,

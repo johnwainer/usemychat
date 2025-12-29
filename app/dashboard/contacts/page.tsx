@@ -61,6 +61,7 @@ export default function ContactsPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [showContactModal, setShowContactModal] = useState(false);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchContacts();
@@ -441,6 +442,50 @@ export default function ContactsPage() {
                     <span className="truncate">{contact.company}</span>
                   </div>
                 )}
+              </div>
+
+              <div className="absolute top-2 right-2">
+                <div className="relative">
+                  <button
+                    onClick={() => setOpenMenuId(openMenuId === contact.id ? null : contact.id)}
+                    className="p-1 rounded-full bg-white shadow-md hover:bg-gray-50"
+                  >
+                    <MoreVertical className="w-4 h-4 text-gray-600" />
+                  </button>
+                  {openMenuId === contact.id && (
+                    <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10">
+                      <Link
+                        href={`/dashboard/contacts/${contact.id}`}
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        onClick={() => setOpenMenuId(null)}
+                      >
+                        <Eye className="w-4 h-4" />
+                        Ver detalles
+                      </Link>
+                      <button
+                        onClick={() => {
+                          setSelectedContact(contact);
+                          setShowContactModal(true);
+                          setOpenMenuId(null);
+                        }}
+                        className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      >
+                        <Edit className="w-4 h-4" />
+                        Editar
+                      </button>
+                      <button
+                        onClick={() => {
+                          handleDeleteContact(contact.id);
+                          setOpenMenuId(null);
+                        }}
+                        className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-50"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        Eliminar
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="flex items-center justify-between">

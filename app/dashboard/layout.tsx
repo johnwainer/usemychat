@@ -45,27 +45,25 @@ export default function DashboardLayout({
         .eq('id', user.id)
         .single();
 
-      console.log('Dashboard Layout - User:', user.id);
-      console.log('Dashboard Layout - Profile Data:', profileData);
-      console.log('Dashboard Layout - Profile Error:', profileError);
+      if (profileError) {
+        console.error('Error fetching profile:', profileError);
+        router.push('/login');
+        return;
+      }
+
+      if (profileData?.role === 'admin') {
+        router.push('/admin/dashboard');
+        return;
+      }
+
+      if (profileData?.status === 'inactive' || profileData?.status === 'suspended') {
+        await supabase.auth.signOut();
+        router.push('/login');
+        return;
+      }
 
       if (profileData) {
         setProfile(profileData);
-
-        // Check if user is inactive
-        if (profileData.status === 'inactive' || profileData.status === 'suspended') {
-          await supabase.auth.signOut();
-          router.push('/login');
-          return;
-        }
-
-        // Redirect admin to admin dashboard
-        if (profileData.role === 'admin') {
-          router.push('/admin/dashboard');
-          return;
-        }
-      } else {
-        console.error('No profile found for user:', user.id);
       }
 
       setLoading(false);

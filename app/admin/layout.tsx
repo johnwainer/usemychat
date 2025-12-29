@@ -45,24 +45,18 @@ export default function AdminLayout({
         .eq('id', user.id)
         .single();
 
-      console.log('Admin Layout - User:', user.id);
-      console.log('Admin Layout - Profile Data:', profileData);
-      console.log('Admin Layout - Profile Error:', profileError);
+      if (profileError) {
+        console.error('Error fetching profile:', profileError);
+        router.push('/login');
+        return;
+      }
 
-      if (profileData) {
-        // Check if user is admin
-        if (profileData.role !== 'admin') {
-          console.log('User is not admin, redirecting to client dashboard');
-          router.push('/dashboard');
-          return;
-        }
-
-        setProfile(profileData);
-      } else {
-        console.error('No profile found for admin user:', user.id);
+      if (profileData?.role !== 'admin') {
         router.push('/dashboard');
         return;
       }
+
+      setProfile(profileData);
 
       setLoading(false);
     };

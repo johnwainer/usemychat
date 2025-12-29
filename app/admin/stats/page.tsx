@@ -31,6 +31,7 @@ export default function AdminStatsPage() {
   }, []);
 
   const fetchStats = async () => {
+    const supabase = createClient();
     try {
       const now = new Date();
       const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();

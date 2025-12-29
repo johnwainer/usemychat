@@ -6,6 +6,28 @@
 
 El método `supabase.auth.admin.inviteUserByEmail()` requiere permisos de administrador.
 
+## 🎯 Flujo de Invitación Mejorado
+
+### Cómo funciona ahora:
+
+1. **Usuario invita a un miembro** desde `/dashboard/team`
+2. **Email se envía** con enlace: `https://usemychat.vercel.app/team/join/[token]`
+3. **Usuario hace click** en el enlace del email
+4. **Sistema detecta** si el usuario está autenticado:
+   - ✅ **Si está autenticado:** Muestra botón "Aceptar Invitación"
+   - ❌ **Si NO está autenticado:** Redirige a `/register` con:
+     - Email pre-llenado (del parámetro `?email=`)
+     - Email bloqueado (no se puede cambiar)
+     - Banner azul indicando "Invitación de equipo"
+5. **Después de registrarse/login:** Redirige automáticamente a aceptar la invitación
+6. **Invitación aceptada:** Usuario se une al equipo
+
+### Validaciones importantes:
+
+- ✅ El email del usuario debe coincidir con el email de la invitación
+- ✅ La invitación no debe estar expirada (7 días)
+- ✅ La invitación no debe haber sido aceptada previamente
+
 ## 📋 Checklist de Verificación
 
 ### 1️⃣ Verificar Service Role Key en Vercel

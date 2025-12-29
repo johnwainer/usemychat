@@ -239,7 +239,7 @@ export default function Blog() {
             <input
               type="email"
               placeholder="tu@email.com"
-              className="flex-1 px-6 py-3 rounded-full text-black focus:outline-none focus:ring-2 focus:ring-white"
+              className="flex-1 px-6 py-3 rounded-full text-gray-900 focus:outline-none focus:ring-2 focus:ring-white"
             />
             <button className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-all">
               Suscribirse

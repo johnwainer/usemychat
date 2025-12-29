@@ -614,7 +614,7 @@ export default function ContactDetailPage() {
                   <select
                     value={interactionForm.type}
                     onChange={(e) => setInteractionForm({ ...interactionForm, type: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                     required
                   >
                     <option value="call">Llamada</option>
@@ -637,7 +637,7 @@ export default function ContactDetailPage() {
                   <select
                     value={interactionForm.direction}
                     onChange={(e) => setInteractionForm({ ...interactionForm, direction: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                   >
                     <option value="inbound">Entrante</option>
                     <option value="outbound">Saliente</option>
@@ -653,7 +653,7 @@ export default function ContactDetailPage() {
                   type="text"
                   value={interactionForm.subject}
                   onChange={(e) => setInteractionForm({ ...interactionForm, subject: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                   placeholder="Asunto de la interacción"
                 />
               </div>
@@ -666,7 +666,7 @@ export default function ContactDetailPage() {
                   value={interactionForm.content}
                   onChange={(e) => setInteractionForm({ ...interactionForm, content: e.target.value })}
                   rows={4}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                   placeholder="Detalles de la interacción..."
                 />
               </div>
@@ -680,7 +680,7 @@ export default function ContactDetailPage() {
                     type="number"
                     value={interactionForm.duration_minutes}
                     onChange={(e) => setInteractionForm({ ...interactionForm, duration_minutes: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                     placeholder="30"
                   />
                 </div>
@@ -693,7 +693,7 @@ export default function ContactDetailPage() {
                     type="text"
                     value={interactionForm.outcome}
                     onChange={(e) => setInteractionForm({ ...interactionForm, outcome: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                     placeholder="Exitoso, pendiente, etc."
                   />
                 </div>
@@ -705,7 +705,7 @@ export default function ContactDetailPage() {
                   <select
                     value={interactionForm.sentiment}
                     onChange={(e) => setInteractionForm({ ...interactionForm, sentiment: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                   >
                     <option value="positive">Positivo</option>
                     <option value="neutral">Neutral</option>

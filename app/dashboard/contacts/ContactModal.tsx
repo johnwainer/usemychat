@@ -301,7 +301,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
                       value={formData.first_name}
                       onChange={handleChange}
                       required
-                      className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                      className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                       placeholder="Juan"
                     />
                   </div>
@@ -318,7 +318,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
                       name="last_name"
                       value={formData.last_name}
                       onChange={handleChange}
-                      className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                      className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                       placeholder="Pérez"
                     />
                   </div>
@@ -335,7 +335,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                      className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                       placeholder="juan@ejemplo.com"
                     />
                   </div>
@@ -352,7 +352,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                      className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                       placeholder="+1 234 567 8900"
                     />
                   </div>
@@ -369,7 +369,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
                       name="company"
                       value={formData.company}
                       onChange={handleChange}
-                      className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                      className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                       placeholder="Mi Empresa S.A."
                     />
                   </div>
@@ -386,7 +386,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
                       name="job_title"
                       value={formData.job_title}
                       onChange={handleChange}
-                      className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                      className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                       placeholder="Director de Marketing"
                     />
                   </div>
@@ -404,7 +404,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
                     name="website"
                     value={formData.website}
                     onChange={handleChange}
-                    className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                    className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                     placeholder="https://ejemplo.com"
                   />
                 </div>
@@ -426,7 +426,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
                     name="address_line1"
                     value={formData.address_line1}
                     onChange={handleChange}
-                    className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                    className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                     placeholder="Calle Principal 123"
                   />
                 </div>
@@ -441,7 +441,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
                   name="address_line2"
                   value={formData.address_line2}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                   placeholder="Apartamento, suite, etc."
                 />
               </div>
@@ -456,7 +456,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
                     name="city"
                     value={formData.city}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                     placeholder="Ciudad"
                   />
                 </div>
@@ -470,7 +470,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
                     name="state"
                     value={formData.state}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                     placeholder="Estado"
                   />
                 </div>
@@ -484,7 +484,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
                     name="postal_code"
                     value={formData.postal_code}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                     placeholder="12345"
                   />
                 </div>
@@ -498,7 +498,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
                     name="country"
                     value={formData.country}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                     placeholder="País"
                   />
                 </div>
@@ -513,7 +513,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
                   value={formData.notes}
                   onChange={handleChange}
                   rows={4}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                   placeholder="Notas adicionales sobre el contacto..."
                 />
               </div>
@@ -535,7 +535,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
                       name="whatsapp"
                       value={formData.whatsapp}
                       onChange={handleChange}
-                      className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                      className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                       placeholder="+1 234 567 8900"
                     />
                   </div>
@@ -552,7 +552,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
                       name="telegram"
                       value={formData.telegram}
                       onChange={handleChange}
-                      className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                      className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                       placeholder="@usuario"
                     />
                   </div>
@@ -569,7 +569,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
                       name="instagram"
                       value={formData.instagram}
                       onChange={handleChange}
-                      className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                      className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                       placeholder="@usuario"
                     />
                   </div>
@@ -586,7 +586,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
                       name="facebook"
                       value={formData.facebook}
                       onChange={handleChange}
-                      className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                      className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                       placeholder="usuario"
                     />
                   </div>
@@ -603,7 +603,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
                       name="linkedin"
                       value={formData.linkedin}
                       onChange={handleChange}
-                      className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                      className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                       placeholder="usuario"
                     />
                   </div>
@@ -620,7 +620,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
                       name="twitter"
                       value={formData.twitter}
                       onChange={handleChange}
-                      className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                      className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                       placeholder="@usuario"
                     />
                   </div>
@@ -641,7 +641,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
                     name="status"
                     value={formData.status}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                   >
                     <option value="active">Activo</option>
                     <option value="inactive">Inactivo</option>
@@ -660,7 +660,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
                     name="lifecycle_stage"
                     value={formData.lifecycle_stage}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                   >
                     <option value="lead">Lead</option>
                     <option value="prospect">Prospecto</option>
@@ -681,7 +681,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
                     onChange={handleChange}
                     min="0"
                     max="100"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                   />
                 </div>
 
@@ -694,7 +694,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
                     name="source"
                     value={formData.source}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                     placeholder="Sitio web, referido, campaña, etc."
                   />
                 </div>
@@ -711,7 +711,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
                     name="tags"
                     value={formData.tags}
                     onChange={handleChange}
-                    className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                    className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                     placeholder="vip, importante, seguimiento (separadas por comas)"
                   />
                 </div>

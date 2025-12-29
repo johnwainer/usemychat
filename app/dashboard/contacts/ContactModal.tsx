@@ -746,7 +746,7 @@ export default function ContactModal({ isOpen, onClose, contact, onSave }: Conta
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700"
             >
               Cancelar
             </button>

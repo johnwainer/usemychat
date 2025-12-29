@@ -64,6 +64,8 @@ export default function ContactsPage() {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!openMenuId) return;
+
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
       if (!target.closest('.contact-menu')) {
@@ -71,9 +73,12 @@ export default function ContactsPage() {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    setTimeout(() => {
+      document.addEventListener('mousedown', handleClickOutside);
+    }, 0);
+
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [openMenuId]);
 
   useEffect(() => {
     fetchContacts();

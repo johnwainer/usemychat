@@ -30,7 +30,8 @@ import {
   X,
   Save,
   Loader2,
-  Users
+  Users,
+  Building2
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -281,37 +282,42 @@ export default function AdminContactDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      <div className="p-6">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-gray-200 rounded w-1/4"></div>
+          <div className="h-64 bg-gray-200 rounded"></div>
+        </div>
       </div>
     );
   }
 
   if (!contact) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-400">Contacto no encontrado</p>
-        <Link href="/admin/contacts" className="text-blue-400 hover:text-blue-300 mt-4 inline-block">
-          Volver a contactos
-        </Link>
+      <div className="p-6">
+        <div className="text-center py-12">
+          <p className="text-gray-600">Contacto no encontrado</p>
+          <Link href="/admin/contacts" className="text-blue-600 hover:text-blue-800 mt-4 inline-block">
+            Volver a contactos
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="p-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
           <Link
             href="/admin/contacts"
-            className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
-            <ArrowLeft className="w-5 h-5 text-gray-400" />
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-white">{contact.full_name}</h1>
-            <p className="text-gray-400 mt-1">{contact.job_title || 'Sin cargo'}</p>
+            <h1 className="text-2xl font-bold text-gray-900">{contact.full_name}</h1>
+            <p className="text-gray-600 mt-1">{contact.job_title || 'Sin cargo'}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -319,14 +325,14 @@ export default function AdminContactDetailPage() {
             <>
               <button
                 onClick={() => setEditMode(false)}
-                className="px-4 py-2 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors"
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleSaveEdit}
                 disabled={saving}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-600 flex items-center gap-2"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 flex items-center gap-2"
               >
                 {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                 Guardar
@@ -336,7 +342,7 @@ export default function AdminContactDetailPage() {
             <>
               <button
                 onClick={() => setEditMode(true)}
-                className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors flex items-center gap-2"
+                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2"
               >
                 <Edit className="w-4 h-4" />
                 Editar
@@ -372,74 +378,74 @@ export default function AdminContactDetailPage() {
         {/* Left Column - Contact Info */}
         <div className="lg:col-span-2 space-y-6">
           {/* Basic Info */}
-          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <h2 className="text-lg font-semibold text-white mb-4">Información Básica</h2>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Información Básica</h2>
             <div className="space-y-4">
               {editMode ? (
                 <>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm text-gray-400 mb-1">Nombre</label>
+                      <label className="block text-sm text-gray-600 mb-1">Nombre</label>
                       <input
                         type="text"
                         value={editForm.first_name || ''}
                         onChange={(e) => setEditForm({ ...editForm, first_name: e.target.value })}
-                        className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-gray-900"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm text-gray-400 mb-1">Apellido</label>
+                      <label className="block text-sm text-gray-600 mb-1">Apellido</label>
                       <input
                         type="text"
                         value={editForm.last_name || ''}
                         onChange={(e) => setEditForm({ ...editForm, last_name: e.target.value })}
-                        className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-gray-900"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-400 mb-1">Email</label>
+                    <label className="block text-sm text-gray-600 mb-1">Email</label>
                     <input
                       type="email"
                       value={editForm.email || ''}
                       onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-gray-900"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-400 mb-1">Teléfono</label>
+                    <label className="block text-sm text-gray-600 mb-1">Teléfono</label>
                     <input
                       type="tel"
                       value={editForm.phone || ''}
                       onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-gray-900"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-400 mb-1">Empresa</label>
+                    <label className="block text-sm text-gray-600 mb-1">Empresa</label>
                     <input
                       type="text"
                       value={editForm.company || ''}
                       onChange={(e) => setEditForm({ ...editForm, company: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-gray-900"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-400 mb-1">Cargo</label>
+                    <label className="block text-sm text-gray-600 mb-1">Cargo</label>
                     <input
                       type="text"
                       value={editForm.job_title || ''}
                       onChange={(e) => setEditForm({ ...editForm, job_title: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-gray-900"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-400 mb-1">Sitio Web</label>
+                    <label className="block text-sm text-gray-600 mb-1">Sitio Web</label>
                     <input
                       type="url"
                       value={editForm.website || ''}
                       onChange={(e) => setEditForm({ ...editForm, website: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-gray-900"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
                 </>
@@ -586,17 +592,17 @@ export default function AdminContactDetailPage() {
         {/* Right Column - CRM Info */}
         <div className="space-y-6">
           {/* Status & Score */}
-          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <h2 className="text-lg font-semibold text-white mb-4">Estado CRM</h2>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Estado CRM</h2>
             <div className="space-y-4">
               {editMode ? (
                 <>
                   <div>
-                    <label className="block text-sm text-gray-400 mb-1">Estado</label>
+                    <label className="block text-sm text-gray-600 mb-1">Estado</label>
                     <select
                       value={editForm.status || ''}
                       onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                       <option value="active">Activo</option>
                       <option value="inactive">Inactivo</option>
@@ -607,11 +613,11 @@ export default function AdminContactDetailPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-400 mb-1">Etapa del Ciclo</label>
+                    <label className="block text-sm text-gray-600 mb-1">Etapa del Ciclo</label>
                     <select
                       value={editForm.lifecycle_stage || ''}
                       onChange={(e) => setEditForm({ ...editForm, lifecycle_stage: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                       <option value="subscriber">Suscriptor</option>
                       <option value="lead">Lead</option>
@@ -623,21 +629,21 @@ export default function AdminContactDetailPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-400 mb-1">Lead Score</label>
+                    <label className="block text-sm text-gray-600 mb-1">Lead Score</label>
                     <input
                       type="number"
                       min="0"
                       max="100"
                       value={editForm.lead_score || 0}
                       onChange={(e) => setEditForm({ ...editForm, lead_score: parseInt(e.target.value) })}
-                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-gray-900"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
                 </>
               ) : (
                 <>
                   <div>
-                    <p className="text-sm text-gray-400 mb-1">Estado</p>
+                    <p className="text-sm text-gray-600 mb-1">Estado</p>
                     <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(contact.status)}`}>
                       {contact.status}
                     </span>
@@ -729,18 +735,18 @@ export default function AdminContactDetailPage() {
       {/* Interaction Modal */}
       {showInteractionModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-700">
-              <h2 className="text-xl font-bold text-white">Nueva Interacción</h2>
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-xl font-bold text-gray-900">Nueva Interacción</h2>
             </div>
             <form onSubmit={handleAddInteraction} className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Tipo</label>
+                  <label className="block text-sm text-gray-600 mb-1">Tipo</label>
                   <select
                     value={interactionForm.type}
                     onChange={(e) => setInteractionForm({ ...interactionForm, type: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-gray-900"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     required
                   >
                     <option value="call">Llamada</option>
@@ -751,11 +757,11 @@ export default function AdminContactDetailPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Dirección</label>
+                  <label className="block text-sm text-gray-600 mb-1">Dirección</label>
                   <select
                     value={interactionForm.direction}
                     onChange={(e) => setInteractionForm({ ...interactionForm, direction: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-gray-900"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="inbound">Entrante</option>
                     <option value="outbound">Saliente</option>
@@ -764,44 +770,44 @@ export default function AdminContactDetailPage() {
               </div>
 
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Asunto</label>
+                <label className="block text-sm text-gray-600 mb-1">Asunto</label>
                 <input
                   type="text"
                   value={interactionForm.subject}
                   onChange={(e) => setInteractionForm({ ...interactionForm, subject: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Asunto de la interacción"
                 />
               </div>
 
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Contenido</label>
+                <label className="block text-sm text-gray-600 mb-1">Contenido</label>
                 <textarea
                   value={interactionForm.content}
                   onChange={(e) => setInteractionForm({ ...interactionForm, content: e.target.value })}
                   rows={4}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Detalles de la interacción..."
                 />
               </div>
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Duración (min)</label>
+                  <label className="block text-sm text-gray-600 mb-1">Duración (min)</label>
                   <input
                     type="number"
                     value={interactionForm.duration_minutes}
                     onChange={(e) => setInteractionForm({ ...interactionForm, duration_minutes: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-gray-900"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="30"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Resultado</label>
+                  <label className="block text-sm text-gray-600 mb-1">Resultado</label>
                   <select
                     value={interactionForm.outcome}
                     onChange={(e) => setInteractionForm({ ...interactionForm, outcome: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-gray-900"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="">Seleccionar</option>
                     <option value="successful">Exitoso</option>
@@ -810,11 +816,11 @@ export default function AdminContactDetailPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Sentimiento</label>
+                  <label className="block text-sm text-gray-600 mb-1">Sentimiento</label>
                   <select
                     value={interactionForm.sentiment}
                     onChange={(e) => setInteractionForm({ ...interactionForm, sentiment: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-gray-900"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="positive">Positivo</option>
                     <option value="neutral">Neutral</option>
@@ -827,7 +833,7 @@ export default function AdminContactDetailPage() {
                 <button
                   type="button"
                   onClick={() => setShowInteractionModal(false)}
-                  className="px-4 py-2 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors"
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
                 >
                   Cancelar
                 </button>

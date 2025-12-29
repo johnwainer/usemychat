@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Users, UserCheck, UserX, TrendingUp, MessageSquare, Activity } from 'lucide-react';
+import { Users, UserCheck, UserX, TrendingUp, MessageSquare, Activity, Settings } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
 

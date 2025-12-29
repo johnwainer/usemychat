@@ -1,272 +1,165 @@
 'use client';
 
-import { useSeatete } from'aac
-import { uetRo tfanxt/nvigaion
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Mail, Lock, Alir,Circle, Lo dor2ck, Alertlucide-Circle, Loader2 } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';import { createClient } from '@/lib/supabase/client';
+import { Mail, Lock, AlertCircle, Loader2 } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
 
-
-export drouter = useRouter();
-  const efault function Login() {
+export default function Login() {
   const router = useRouter();
-  const [email setEmail]= useState('''');
-; const [lodngetLaing]=useState(false
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const hendreLogrn = async (e: Rerc,.setEEvent)rr> {
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-   osetLoadingrtrue];
+    setLoading(true);
 
-    tryuseState('');
-    constst supaba e = createClien[();
+    try {
+      const supabase = createClient();
 
-     lcoost { data, arror: signIning,  }et awaitLsupabase.auth.signInWithPassword(o
-  a     ding]s
-e       State(fa,
-})
-  const handleLogin = async (e: React.FormEvent) => {
-      e.prstgnInErrorefault();
-    se  sEtror('('ignInError)essge);
-     stLodng(fae);
-       tn
-    se}
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-      tf (data.uLer) {
-        // Update dast login
-gt      uwait )upabas;
-     .from('profis')
-        upda({ lat_login_a: nw Dte().toISOStrng(})
-         t.eq('id',rdata.us id);
-
-        // Log ctivty
-      awt supabase.rpc('og_actty, {
-          p_user_cd: data.uoer. s,
-        uap_action: 'sogin', createClient();
-      m_metadata: { meth:'email' }
-        });
-
-        // G t uses pswfile t check ole
-     s { data: pofile } = wait upbase
-         .from('profil')
-         .slct('ole, sttus)
-          .eq('}d', dta.user.)
-        .ingl()
-
-  rofile?.sttu === 'inactive' || prfi?.staus==='suspended'
-          a ait supabaIenruth.rignOut();
-          oetErr) (Tuuea h ido dsactiva.Contacaadiitdo.)
-           etLoedEng((sige);
-          rnturnInError.message);
-            setLoading(false);
+      if (signInError) {
+        setError(signInError.message);
+        setLoading(false);
         return;
-        // Redirect ba  d  le
-    if (pofil?.ole=== 'min') {
-          r u er.pusa('/wiabn/dashboard');
-s     } lse {
-          rouerpush('/dashbad';
       }
-        rout r   (reshfiles')
-      }
-    } c ach (t{r: anyat_login_at: new Date().toISOString() })
-       etErr.r(qrr(messade || ,Errdr al iniciar sestóau);
-    e.sitLo)d;ng(fae
+
+      if (data.user) {
+        // Update last login
+        await supabase
+          .from('profiles')
+          .update({ last_login_at: new Date().toISOString() })
+          .eq('id', data.user.id);
 
         // Log activity
         await supabase.rpc('log_activity', {
           p_user_id: data.user.id,
-          p_action: 'login',te flex">
-      {/* Lef side - Form */}
-      <div className="flx-1 s :px-6 g:x-8">
-<dv// Get usermax- pmd w-rofilsp ceoyc8c>k role
-          <div  const { data: profile } = await supabase
-              .from('profiles')juifcnr6
-              .spanole, status'text3xlfo't-b',dttext-b.a.k">UseMyChat)
-              .single();
-            ih2profile?.statextscen= avt|xtp3xlsfaut=bo=d'textubldck
-          t   Ini iusu)sió; nu ua
-           </h2
-          setpor('Tu cuentmt-2 idxtdesactivt xtCsm teotngray-600acta al administrador.');
-          setL¿No tidnfsun?{''}
-          returLikhref="/register" semi hover:underline
-        }Regítrat gris
-Lik
-        // Redpct based on role
+          p_action: 'login',
+          p_metadata: { method: 'email' }
+        });
+
+        // Get user profile to check role
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role, status')
+          .eq('id', data.user.id)
+          .single();
+
+        if (profile?.status === 'inactive' || profile?.status === 'suspended') {
+          await supabase.auth.signOut();
+          setError('Tu cuenta ha sido desactivada. Contacta al administrador.');
+          setLoading(false);
+          return;
+        }
+
+        // Redirect based on role
         if (profile?.role === 'admin') {
           router.push('/admin/dashboard');
-        } eforme {m-8 spac-y6"Submi={hanLogi}>
-            {rro &&(
-            ro<dtv className="bg-rph-50 b(rder'bor/er-rdd-200arousdbd-lg p-4 flex items-start">
-    }        rouAlertCircleer.refresh()w-5 h-5 ;ed mr-3flshrik-0t0.5 /
-        }<plassName="tx-smtext-red-800">{er}</p>
-        } catch dive
-            )}rr: any) {
-      setError(err.message || 'Error al iniciar sesión');
-        setLov4
+        } else {
+          router.push('/dashboard');
+        }
+        router.refresh();
       }
-    };el htmlFor="mai"gry-700
-  
-    return (
-      <div className="min-h-screen bg-white flex">
-        {/* Left side - Form */}
-        <div className="
-                    id="email"flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
-          <div classname="email"
-                    Name="max-w-md w-full space-y-8">
-          <div>  autoComplete="email"
-                    required
-                    
-            <Link   href="/" className="flex items-center justify-center mb-6">
-              <spa  n classNamepl-10 ="text-pxl4 py-3-bold text-black">UseMyChat</span>fous:in2rgblacktransprental
-              </Link>
-<h2               na sesión en tu cuenta
-            </l/ v
-                <Link href="/register" className="font-semibold text-black hover:underline">
+    } catch (err: any) {
+      setError(err.message || 'Error al iniciar sesión');
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-white flex">
+      {/* Left side - Form */}
+      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8">
+          <div>
+            <Link href="/" className="flex items-center justify-center mb-6">
+              <span className="text-3xl font-bold text-black">UseMyChat</span>
+            </Link>
+            <h2 className="text-center text-3xl font-bold text-black">
+              Inicia sesión en tu cuenta
+            </h2>
+            <p className="mt-2 text-center text-sm text-gray-600">
+              ¿No tienes cuenta?{' '}
+              <Link href="/register" className="font-semibold text-black hover:underline">
                 Regístrate gratis
-                </Link>
-              </p>l htmFor="password"gry-700
-           </div> 
-  
-           <for m className="mt-8 space-y-6" onSubmit={handleLogin}>
-             {err or && (
-               <d iv cla
-                    id="password"ssName="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start">
-                  <Aname="password"
-                    lepe="password"
-                    autoComrltteCicurrent-rcle className="w-5 h-5 text-red-600 mr-3 flex-shrink-0 mt-0.5" />
-                <p  required
-                     className="text-sm text-red-800">{error}</p>
-              </di  v>
-            )}  pl-10 px4py-3 fcus:in2rgblacktrnsparental
-  
-            <div   className="space-y-4">
-                <div>
-               /iv</label>
+              </Link>
+            </p>
+          </div>
+
+          <form className="mt-8 space-y-6" onSubmit={handleLogin}>
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start">
+                <AlertCircle className="w-5 h-5 text-red-600 mr-3 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-red-800">{error}</p>
+              </div>
+            )}
+
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  Email
+                </label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
-               divid="email"
-                    na
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="pl-10 w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                    placeholder="tu@email.com"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                  Contraseña
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    autoComplete="current-password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pl-10 w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                    placeholder="••••••••"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <input
                   id="remember-me"
                   name="remember-me"
-                 me="email"
-                 hw border-gray-300 rounded
-               
-                 l belyhtmlFor="remember-me" pe="email"block 7
-                  
-                lbel
-                div>
-
-              <div c  ssNam ="text-sm"utoComplete="email"
-                 Link    req/forgot-passwordiredfoneiboldblckundle
-                      value={email}
-                  Link   onChange={(e) => setEmail(e.target.value)}
-                      className="pl-10 w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
-             /d v>
-
-            <buttvn
-              tye"ubmit"
-dialed={loadng}
-              <div>f jusifycenter ms-centerpx-4 boder brder-transparent roshadow-sm text-sm text-wite bg-black hfocus:ouline-none focus:ig-2 focu:rng-offse-2 fcus:rigblak transitin-al disabled:pacity-50 disabled:cuor-not-allowed
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-              {loodeag ? (
-                 
-                   Loa er2    <inputaniaspi -ml-1 m-2 h-5 w-5 /
-                  Ini i ndo  "sión...
-               =</>
-s            ) : (
-               'IniiSó'
-              )}
-  m         </betton>e="current-password"
-          </form>
-
-           d v className="mt-6"required
-             div className="relative"     value={password}
-                   className="absolute inset-0 flex items-center"                     className="pl-10 w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
-                          placehw•full••••••" />
-              </div
-               div    />relaive fl jusifysm">
-                <span clasNae="px-2 bg-white5san>
-              </div>
-            </div
-
-                </div>mt-6 3
-              <button
-                type="/div>"
-               w-ulinlnflxy3px4g shadow-sm b-white text-smfontmediumgry-700al
-              
-            </div>
-
-                   
-                   
-                  
-            <div classN
-                   ame="flex items-cent
-                   er justify-between">
-                  
-              <div clas
-                   sName="flex items-ce
-                   nter">
-                  
-                <input
-                   
-                   
-                  
-                  id="remember-me"
-              mbbuttome
-"
-                 type"checkbox"
-                type="   cla"
-               ssName="h-4 w-wul-tinlentlflfxcus:ring-black bryr3ypx04nded"g shadow-sm b-white text-smfontmediumgry-700al
-              
+                  type="checkbox"
+                  className="h-4 w-4 text-black focus:ring-black border-gray-300 rounded"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700"> 
-                  Rec>
-              </button>
-            </div>
-          </div>
-        </div>
-      </divo
+                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+                  Recordarme
+                </label>
+              </div>
 
-      {/* Right side - Image/Branding */}rdarme
-      <div className="hidden lg:block relative w-0 flex-1 bg-gradient-to-br from-gray-900 to-gray-700">
-        <div cla/sName="absolute inset-0 flex items-center justify-center l-12">
-          <div className="max-w-md text-white">
-            <h2 className="text-4xl fobt-bold mb-6"e
-              Bienvenido de vuelta
-            </h2>
-            <p className="text-xl text-gray-300 mb-8">
-              lest>ona odas ts conversaciones desde un solo lugar con el poder de la IA.
-            </p>
-            <div className="space-y-4">
-              <div className="flex items-center">
-                <div className="w-12 h-12 g-white/10 rounded-lg flex items-center justify-center mr-4">
-                  svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" >
-                  </vg>
-                </div>
-                <s className="text-lg"Gestión omnicanal</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-12 h-12 dg-white/10 rounded-lg flex items-center justify-center mr-4">
-                  <svg className="w-6 h-6" fill="none" stroke="cirrentColor" viewBox="0 0 24 24">
-                    <path svrokeLinecap="round" s>rokeLinejoin="rud" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg
-    >
-                <span className="text-lg">Automatización con IA</span
-                div>
-              <  < className="flex items-center"div className="text-sm">
-                 div className="w-12 h-12 bg-white 10 rounded-lg flex items-center justify-center mr-4">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="roun " strokeW dth={2} d="M5 13l4 4L19 7" />
-                  </s g   <Link href="/forgot-password" className="font-semibold text-black hover:underline">
-                  div>
-                <span classNa e="text-lg">Análisis en   emp  real</spa >
-              </div>
-            </div>
-          </div>
-        </div>
-      </   ¿Olvidaste tu contraseña?
+              <div className="text-sm">
+                <Link href="/forgot-password" className="font-semibold text-black hover:underline">
+                  ¿Olvidaste tu contraseña?
                 </Link>
               </div>
             </div>

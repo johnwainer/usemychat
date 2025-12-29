@@ -3,16 +3,17 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { 
-  LayoutDashboard, 
-  Users, 
-  BarChart3, 
-  Settings, 
+import {
+  LayoutDashboard,
+  Users,
+  BarChart3,
+  Settings,
   LogOut,
   Menu,
   X,
   Shield,
-  Activity
+  Activity,
+  UserCircle
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
@@ -74,6 +75,7 @@ export default function AdminLayout({
   const navigation = [
     { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
     { name: 'Usuarios', href: '/admin/users', icon: Users },
+    { name: 'Contactos', href: '/admin/contacts', icon: UserCircle },
     { name: 'Actividad', href: '/admin/activity', icon: Activity },
     { name: 'Estadísticas', href: '/admin/stats', icon: BarChart3 },
     { name: 'Configuración', href: '/admin/settings', icon: Settings },

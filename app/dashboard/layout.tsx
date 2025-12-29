@@ -3,16 +3,17 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { 
-  LayoutDashboard, 
-  MessageSquare, 
-  Users, 
-  BarChart3, 
-  Settings, 
+import {
+  LayoutDashboard,
+  MessageSquare,
+  Users,
+  BarChart3,
+  Settings,
   LogOut,
   Menu,
   X,
-  User
+  User,
+  UsersRound
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
@@ -83,6 +84,7 @@ export default function DashboardLayout({
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Conversaciones', href: '/dashboard/conversations', icon: MessageSquare },
     { name: 'Contactos', href: '/dashboard/contacts', icon: Users },
+    { name: 'Equipo', href: '/dashboard/team', icon: UsersRound },
     { name: 'Estadísticas', href: '/dashboard/stats', icon: BarChart3 },
     { name: 'Configuración', href: '/dashboard/settings', icon: Settings },
   ];

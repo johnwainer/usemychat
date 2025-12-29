@@ -20,12 +20,12 @@ export default function Footer() {
             <h3 className="font-semibold text-black mb-4">Producto</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/#features" className="text-sm text-gray-600 hover:text-black transition-colors">
+                <Link href="/caracteristicas" className="text-sm text-gray-600 hover:text-black transition-colors">
                   Características
                 </Link>
               </li>
               <li>
-                <Link href="/#pricing" className="text-sm text-gray-600 hover:text-black transition-colors">
+                <Link href="/precios" className="text-sm text-gray-600 hover:text-black transition-colors">
                   Precios
                 </Link>
               </li>

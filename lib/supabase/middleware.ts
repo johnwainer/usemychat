@@ -42,6 +42,8 @@ export async function updateSession(request: NextRequest) {
     '/privacidad',
     '/terminos',
     '/cookies',
+    '/caracteristicas',
+    '/precios',
     '/test-supabase'
   ]
 

@@ -114,8 +114,7 @@ export default function JoinTeamPage() {
 
   const handleAcceptInvitation = async () => {
     if (!currentUser) {
-      // Redirect to login with return URL
-      router.push(`/login?redirect=/team/join/${token}`);
+      router.push(`/register?redirect=/team/join/${token}&email=${encodeURIComponent(invitation?.email || '')}`);
       return;
     }
 

@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
@@ -7,7 +7,10 @@ export async function POST(request: Request) {
 
     console.log('📧 Starting invitation process:', { email, role, token, inviterName });
 
-    const supabase = await createClient();
+    // Use admin client for inviteUserByEmail
+    const supabase = await createAdminClient();
+
+    // Get current user from cookies (still need to verify authentication)
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -42,7 +45,7 @@ export async function POST(request: Request) {
       invitation_link: invitationLink
     });
 
-    // Send email using Supabase Auth
+    // Send email using Supabase Auth Admin
     const { data: inviteData, error: emailError } = await supabase.auth.admin.inviteUserByEmail(email, {
       data: {
         invitation_type: 'team_member',

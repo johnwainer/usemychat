@@ -101,12 +101,32 @@ export default function ContactsPage() {
         .from('contact_statistics')
         .select('*')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
-      if (error) throw error;
-      setStats(data);
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
+
+      if (data) {
+        setStats(data);
+      } else {
+        setStats({
+          total_contacts: 0,
+          active_contacts: 0,
+          leads: 0,
+          customers: 0,
+          new_contacts_last_30_days: 0,
+        });
+      }
     } catch (error) {
       console.error('Error fetching stats:', error);
+      setStats({
+        total_contacts: 0,
+        active_contacts: 0,
+        leads: 0,
+        customers: 0,
+        new_contacts_last_30_days: 0,
+      });
     }
   };
 

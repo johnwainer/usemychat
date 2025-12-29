@@ -305,87 +305,155 @@ export default function AdminContactDetailPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
-          <Link
-            href="/admin/contacts"
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5 text-gray-600" />
-          </Link>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">{contact.full_name}</h1>
-            <p className="text-gray-600 mt-1">{contact.job_title || 'Sin cargo'}</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {editMode ? (
-            <>
-              <button
-                onClick={() => setEditMode(false)}
-                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleSaveEdit}
-                disabled={saving}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 flex items-center gap-2"
-              >
-                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                Guardar
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                onClick={() => setEditMode(true)}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2"
-              >
-                <Edit className="w-4 h-4" />
-                Editar
-              </button>
-              <button
-                onClick={handleDeleteContact}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2"
-              >
-                <Trash2 className="w-4 h-4" />
-                Eliminar
-              </button>
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* Client Info Card */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-6">
-        <div className="flex items-center gap-3 text-white">
-          <Users className="w-6 h-6" />
-          <div>
-            <p className="text-sm opacity-90">Cliente Propietario</p>
-            <p className="text-xl font-bold">{contact.profiles?.full_name}</p>
-            <p className="text-sm opacity-75">{contact.profiles?.email}</p>
-            {contact.profiles?.company && (
-              <p className="text-sm opacity-75">{contact.profiles.company}</p>
-            )}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <Link
+              href="/admin/contacts"
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              <span className="font-medium">Volver a contactos</span>
+            </Link>
+            <div className="flex items-center gap-2">
+              {editMode ? (
+                <>
+                  <button
+                    onClick={() => setEditMode(false)}
+                    className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={handleSaveEdit}
+                    disabled={saving}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 flex items-center gap-2"
+                  >
+                    {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                    Guardar
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => setEditMode(true)}
+                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2"
+                  >
+                    <Edit className="w-4 h-4" />
+                    Editar
+                  </button>
+                  <button
+                    onClick={handleDeleteContact}
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Eliminar
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column - Contact Info */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Basic Info */}
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600">
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          <div className="flex items-center gap-6">
+            {/* Avatar */}
+            <div className="relative">
+              {contact.avatar_url ? (
+                <img
+                  src={contact.avatar_url}
+                  alt={contact.full_name}
+                  className="w-24 h-24 rounded-full border-4 border-white shadow-lg object-cover"
+                />
+              ) : (
+                <div className="w-24 h-24 rounded-full border-4 border-white shadow-lg bg-white flex items-center justify-center">
+                  <User className="w-12 h-12 text-gray-400" />
+                </div>
+              )}
+              <div className={`absolute bottom-1 right-1 w-5 h-5 rounded-full border-2 border-white ${
+                contact.status === 'active' ? 'bg-green-500' : 'bg-gray-400'
+              }`} />
+            </div>
+
+            {/* Contact Info */}
+            <div className="flex-1 text-white">
+              <h1 className="text-3xl font-bold mb-2">{contact.full_name}</h1>
+              <div className="flex flex-wrap items-center gap-4 text-sm">
+                {contact.job_title && (
+                  <div className="flex items-center gap-2">
+                    <Briefcase className="w-4 h-4" />
+                    <span>{contact.job_title}</span>
+                  </div>
+                )}
+                {contact.company && (
+                  <div className="flex items-center gap-2">
+                    <Building className="w-4 h-4" />
+                    <span>{contact.company}</span>
+                  </div>
+                )}
+                {contact.email && (
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-4 h-4" />
+                    <span>{contact.email}</span>
+                  </div>
+                )}
+                {contact.phone && (
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-4 h-4" />
+                    <span>{contact.phone}</span>
+                  </div>
+                )}
+              </div>
+              <div className="flex items-center gap-3 mt-3">
+                <span className={`px-3 py-1 rounded-full text-xs font-medium bg-white/20 backdrop-blur-sm`}>
+                  {contact.lifecycle_stage.replace(/_/g, ' ').toUpperCase()}
+                </span>
+                <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
+                  <TrendingUp className="w-4 h-4" />
+                  <span className="text-xs font-medium">Score: {contact.lead_score}/100</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Owner Info */}
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+              <p className="text-xs text-white/80 mb-1">Cliente Propietario</p>
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                  <User className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="font-semibold text-white">{contact.profiles?.full_name}</p>
+                  <p className="text-xs text-white/80">{contact.profiles?.email}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-6 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column - Contact Info */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Basic Info */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Información Básica</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <User className="w-5 h-5 text-blue-600" />
+              Información de Contacto
+            </h2>
             <div className="space-y-4">
               {editMode ? (
                 <>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm text-gray-600 mb-1">Nombre</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
                       <input
                         type="text"
                         value={editForm.first_name || ''}
@@ -394,7 +462,7 @@ export default function AdminContactDetailPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm text-gray-600 mb-1">Apellido</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Apellido</label>
                       <input
                         type="text"
                         value={editForm.last_name || ''}
@@ -403,44 +471,48 @@ export default function AdminContactDetailPage() {
                       />
                     </div>
                   </div>
-                  <div>
-                    <label className="block text-sm text-gray-600 mb-1">Email</label>
-                    <input
-                      type="email"
-                      value={editForm.email || ''}
-                      onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                      <input
+                        type="email"
+                        value={editForm.email || ''}
+                        onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                      <input
+                        type="tel"
+                        value={editForm.phone || ''}
+                        onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Empresa</label>
+                      <input
+                        type="text"
+                        value={editForm.company || ''}
+                        onChange={(e) => setEditForm({ ...editForm, company: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Cargo</label>
+                      <input
+                        type="text"
+                        value={editForm.job_title || ''}
+                        onChange={(e) => setEditForm({ ...editForm, job_title: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-600 mb-1">Teléfono</label>
-                    <input
-                      type="tel"
-                      value={editForm.phone || ''}
-                      onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm text-gray-600 mb-1">Empresa</label>
-                    <input
-                      type="text"
-                      value={editForm.company || ''}
-                      onChange={(e) => setEditForm({ ...editForm, company: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm text-gray-600 mb-1">Cargo</label>
-                    <input
-                      type="text"
-                      value={editForm.job_title || ''}
-                      onChange={(e) => setEditForm({ ...editForm, job_title: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm text-gray-600 mb-1">Sitio Web</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Sitio Web</label>
                     <input
                       type="url"
                       value={editForm.website || ''}
@@ -450,44 +522,69 @@ export default function AdminContactDetailPage() {
                   </div>
                 </>
               ) : (
-                <>
+                <div className="grid grid-cols-2 gap-4">
                   {contact.email && (
-                    <div className="flex items-center gap-3 text-gray-700">
-                      <Mail className="w-5 h-5 text-gray-500" />
-                      <a href={`mailto:${contact.email}`} className="hover:text-blue-600">
-                        {contact.email}
-                      </a>
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <div className="p-2 bg-blue-100 rounded-lg">
+                        <Mail className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-gray-500 mb-0.5">Email</p>
+                        <a href={`mailto:${contact.email}`} className="text-sm text-gray-900 hover:text-blue-600 truncate block">
+                          {contact.email}
+                        </a>
+                      </div>
                     </div>
                   )}
                   {contact.phone && (
-                    <div className="flex items-center gap-3 text-gray-700">
-                      <Phone className="w-5 h-5 text-gray-500" />
-                      <a href={`tel:${contact.phone}`} className="hover:text-blue-600">
-                        {contact.phone}
-                      </a>
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <div className="p-2 bg-green-100 rounded-lg">
+                        <Phone className="w-5 h-5 text-green-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-gray-500 mb-0.5">Teléfono</p>
+                        <a href={`tel:${contact.phone}`} className="text-sm text-gray-900 hover:text-blue-600 truncate block">
+                          {contact.phone}
+                        </a>
+                      </div>
                     </div>
                   )}
                   {contact.company && (
-                    <div className="flex items-center gap-3 text-gray-700">
-                      <Building className="w-5 h-5 text-gray-500" />
-                      <span>{contact.company}</span>
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <div className="p-2 bg-purple-100 rounded-lg">
+                        <Building className="w-5 h-5 text-purple-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-gray-500 mb-0.5">Empresa</p>
+                        <p className="text-sm text-gray-900 truncate">{contact.company}</p>
+                      </div>
                     </div>
                   )}
                   {contact.job_title && (
-                    <div className="flex items-center gap-3 text-gray-700">
-                      <Briefcase className="w-5 h-5 text-gray-500" />
-                      <span>{contact.job_title}</span>
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <div className="p-2 bg-orange-100 rounded-lg">
+                        <Briefcase className="w-5 h-5 text-orange-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-gray-500 mb-0.5">Cargo</p>
+                        <p className="text-sm text-gray-900 truncate">{contact.job_title}</p>
+                      </div>
                     </div>
                   )}
                   {contact.website && (
-                    <div className="flex items-center gap-3 text-gray-700">
-                      <Globe className="w-5 h-5 text-gray-500" />
-                      <a href={contact.website} target="_blank" rel="noopener noreferrer" className="hover:text-blue-600">
-                        {contact.website}
-                      </a>
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg col-span-2">
+                      <div className="p-2 bg-indigo-100 rounded-lg">
+                        <Globe className="w-5 h-5 text-indigo-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-gray-500 mb-0.5">Sitio Web</p>
+                        <a href={contact.website} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-900 hover:text-blue-600 truncate block">
+                          {contact.website}
+                        </a>
+                      </div>
                     </div>
                   )}
-                </>
+                </div>
               )}
             </div>
           </div>
@@ -495,36 +592,64 @@ export default function AdminContactDetailPage() {
           {/* Social Media */}
           {!editMode && (contact.instagram || contact.facebook || contact.linkedin || contact.twitter || contact.tiktok || contact.whatsapp || contact.telegram) && (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Redes Sociales</h2>
-              <div className="grid grid-cols-2 gap-4">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <Globe className="w-5 h-5 text-blue-600" />
+                Redes Sociales
+              </h2>
+              <div className="grid grid-cols-2 gap-3">
                 {contact.instagram && (
-                  <a href={`https://instagram.com/${contact.instagram}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-700 hover:text-pink-600">
-                    <Instagram className="w-5 h-5" />
-                    <span>@{contact.instagram}</span>
+                  <a href={`https://instagram.com/${contact.instagram}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg hover:shadow-md transition-all group">
+                    <div className="p-2 bg-white rounded-lg shadow-sm">
+                      <Instagram className="w-5 h-5 text-pink-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-gray-500">Instagram</p>
+                      <p className="text-sm font-medium text-gray-900 truncate group-hover:text-pink-600">@{contact.instagram}</p>
+                    </div>
                   </a>
                 )}
                 {contact.facebook && (
-                  <a href={`https://facebook.com/${contact.facebook}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-700 hover:text-blue-600">
-                    <Facebook className="w-5 h-5" />
-                    <span>{contact.facebook}</span>
+                  <a href={`https://facebook.com/${contact.facebook}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg hover:shadow-md transition-all group">
+                    <div className="p-2 bg-white rounded-lg shadow-sm">
+                      <Facebook className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-gray-500">Facebook</p>
+                      <p className="text-sm font-medium text-gray-900 truncate group-hover:text-blue-600">{contact.facebook}</p>
+                    </div>
                   </a>
                 )}
                 {contact.linkedin && (
-                  <a href={`https://linkedin.com/in/${contact.linkedin}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-700 hover:text-blue-600">
-                    <Linkedin className="w-5 h-5" />
-                    <span>{contact.linkedin}</span>
+                  <a href={`https://linkedin.com/in/${contact.linkedin}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg hover:shadow-md transition-all group">
+                    <div className="p-2 bg-white rounded-lg shadow-sm">
+                      <Linkedin className="w-5 h-5 text-blue-700" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-gray-500">LinkedIn</p>
+                      <p className="text-sm font-medium text-gray-900 truncate group-hover:text-blue-700">{contact.linkedin}</p>
+                    </div>
                   </a>
                 )}
                 {contact.twitter && (
-                  <a href={`https://x.com/${contact.twitter}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-700 hover:text-gray-900">
-                    <X className="w-5 h-5" />
-                    <span>@{contact.twitter}</span>
+                  <a href={`https://x.com/${contact.twitter}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:shadow-md transition-all group">
+                    <div className="p-2 bg-white rounded-lg shadow-sm">
+                      <X className="w-5 h-5 text-gray-900" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-gray-500">X (Twitter)</p>
+                      <p className="text-sm font-medium text-gray-900 truncate group-hover:text-gray-700">@{contact.twitter}</p>
+                    </div>
                   </a>
                 )}
                 {contact.tiktok && (
-                  <a href={`https://tiktok.com/@${contact.tiktok}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-700 hover:text-gray-900">
-                    <Music className="w-5 h-5" />
-                    <span>@{contact.tiktok}</span>
+                  <a href={`https://tiktok.com/@${contact.tiktok}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 bg-gray-900 bg-opacity-5 rounded-lg hover:shadow-md transition-all group">
+                    <div className="p-2 bg-white rounded-lg shadow-sm">
+                      <Music className="w-5 h-5 text-gray-900" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-gray-500">TikTok</p>
+                      <p className="text-sm font-medium text-gray-900 truncate group-hover:text-gray-700">@{contact.tiktok}</p>
+                    </div>
                   </a>
                 )}
               </div>
@@ -533,51 +658,110 @@ export default function AdminContactDetailPage() {
 
           {/* Interactions History */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">Historial de Interacciones</h2>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <MessageSquare className="w-5 h-5 text-blue-600" />
+                Historial de Interacciones
+              </h2>
               <button
                 onClick={() => setShowInteractionModal(true)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 shadow-sm"
               >
                 <Plus className="w-4 h-4" />
                 Nueva Interacción
               </button>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               {interactions.length === 0 ? (
-                <p className="text-gray-500 text-center py-8">No hay interacciones registradas</p>
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <MessageSquare className="w-8 h-8 text-gray-400" />
+                  </div>
+                  <p className="text-gray-500 font-medium">No hay interacciones registradas</p>
+                  <p className="text-gray-400 text-sm mt-1">Comienza agregando una nueva interacción</p>
+                </div>
               ) : (
                 interactions.map((interaction) => (
-                  <div key={interaction.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
-                    <div className="flex items-start gap-3">
-                      <div className="p-2 bg-blue-50 rounded-lg text-blue-600">
-                        {getInteractionIcon(interaction.type)}
+                  <div key={interaction.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all bg-gradient-to-r from-gray-50 to-white">
+                    <div className="flex items-start gap-4">
+                      <div className={`p-3 rounded-lg ${
+                        interaction.type === 'call' ? 'bg-green-100' :
+                        interaction.type === 'email' ? 'bg-blue-100' :
+                        interaction.type === 'meeting' ? 'bg-purple-100' :
+                        interaction.type === 'message' ? 'bg-yellow-100' :
+                        'bg-gray-100'
+                      }`}>
+                        <div className={
+                          interaction.type === 'call' ? 'text-green-600' :
+                          interaction.type === 'email' ? 'text-blue-600' :
+                          interaction.type === 'meeting' ? 'text-purple-600' :
+                          interaction.type === 'message' ? 'text-yellow-600' :
+                          'text-gray-600'
+                        }>
+                          {getInteractionIcon(interaction.type)}
+                        </div>
                       </div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-2">
-                          <h3 className="font-medium text-gray-900">
-                            {interaction.subject || interaction.type.charAt(0).toUpperCase() + interaction.type.slice(1)}
-                          </h3>
-                          <span className="text-sm text-gray-500">
-                            {new Date(interaction.interaction_date).toLocaleDateString()}
-                          </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between mb-2">
+                          <div>
+                            <h3 className="font-semibold text-gray-900">
+                              {interaction.subject || interaction.type.charAt(0).toUpperCase() + interaction.type.slice(1)}
+                            </h3>
+                            <div className="flex items-center gap-3 mt-1">
+                              <span className="text-xs text-gray-500 flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                {new Date(interaction.interaction_date).toLocaleDateString('es-ES', {
+                                  day: 'numeric',
+                                  month: 'short',
+                                  year: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </span>
+                              {interaction.direction && (
+                                <span className={`text-xs px-2 py-0.5 rounded-full ${
+                                  interaction.direction === 'inbound'
+                                    ? 'bg-green-100 text-green-700'
+                                    : 'bg-blue-100 text-blue-700'
+                                }`}>
+                                  {interaction.direction === 'inbound' ? '↓ Entrante' : '↑ Saliente'}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          {interaction.sentiment && (
+                            <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                              interaction.sentiment === 'positive' ? 'bg-green-100 text-green-700' :
+                              interaction.sentiment === 'negative' ? 'bg-red-100 text-red-700' :
+                              'bg-gray-100 text-gray-700'
+                            }`}>
+                              {interaction.sentiment === 'positive' ? '😊 Positivo' :
+                               interaction.sentiment === 'negative' ? '😞 Negativo' :
+                               '😐 Neutral'}
+                            </span>
+                          )}
                         </div>
                         {interaction.content && (
-                          <p className="text-gray-700 text-sm mb-2">{interaction.content}</p>
+                          <p className="text-gray-700 text-sm mb-3 line-clamp-2">{interaction.content}</p>
                         )}
-                        <div className="flex items-center gap-4 text-xs text-gray-500">
-                          {interaction.direction && (
-                            <span className="capitalize">{interaction.direction}</span>
-                          )}
+                        <div className="flex items-center gap-4 text-xs">
                           {interaction.duration_minutes && (
-                            <span>{interaction.duration_minutes} min</span>
+                            <span className="flex items-center gap-1 text-gray-500">
+                              <Clock className="w-3 h-3" />
+                              {interaction.duration_minutes} min
+                            </span>
                           )}
                           {interaction.outcome && (
-                            <span className="capitalize">{interaction.outcome}</span>
-                          )}
-                          {interaction.sentiment && (
-                            <span className="capitalize">{interaction.sentiment}</span>
+                            <span className={`px-2 py-0.5 rounded-full ${
+                              interaction.outcome === 'successful' ? 'bg-green-100 text-green-700' :
+                              interaction.outcome === 'unsuccessful' ? 'bg-red-100 text-red-700' :
+                              'bg-yellow-100 text-yellow-700'
+                            }`}>
+                              {interaction.outcome === 'successful' ? '✓ Exitoso' :
+                               interaction.outcome === 'unsuccessful' ? '✗ No exitoso' :
+                               '⟳ Requiere seguimiento'}
+                            </span>
                           )}
                         </div>
                       </div>
@@ -730,6 +914,7 @@ export default function AdminContactDetailPage() {
             </div>
           )}
         </div>
+      </div>
       </div>
 
       {/* Interaction Modal */}

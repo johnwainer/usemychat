@@ -96,14 +96,7 @@ export default function JoinTeamPage() {
 
     const { data, error } = await supabase
       .from('team_invitations')
-      .select(`
-        *,
-        profiles:invited_by (
-          full_name,
-          email,
-          company
-        )
-      `)
+      .select('*')
       .eq('token', token)
       .is('accepted_at', null)
       .single();
@@ -111,12 +104,34 @@ export default function JoinTeamPage() {
     if (error || !data) {
       console.error('Error fetching invitation:', error);
       setError('Invitación no encontrada o ya ha sido aceptada');
+      setLoading(false);
+      return;
+    }
+
+    // Fetch inviter profile separately
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('full_name, email, company')
+      .eq('id', data.invited_by)
+      .single();
+
+    console.log('Invitation data:', data);
+    console.log('Profile data:', profileData);
+
+    const invitationWithProfile = {
+      ...data,
+      profiles: profileData
+    };
+
+    if (error || !data) {
+      console.error('Error fetching invitation:', error);
+      setError('Invitación no encontrada o ya ha sido aceptada');
     } else {
       console.log('Invitation data:', data);
-      if (new Date(data.expires_at) < new Date()) {
+      if (new Date(invitationWithProfile.expires_at) < new Date()) {
         setError('Esta invitación ha expirado');
       } else {
-        setInvitation(data);
+        setInvitation(invitationWithProfile);
       }
     }
 

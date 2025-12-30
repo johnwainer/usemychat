@@ -27,7 +27,7 @@ interface Invitation {
     full_name: string;
     email: string;
     company: string | null;
-  };
+  } | null;
 }
 
 const roleConfig = {
@@ -211,14 +211,14 @@ export default function JoinTeamPage() {
             <h2 className="text-sm font-medium text-gray-500 mb-3">INVITADO POR</h2>
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                {invitation.profiles.full_name.charAt(0).toUpperCase()}
+                {invitation.profiles?.full_name?.charAt(0).toUpperCase() || 'U'}
               </div>
               <div>
                 <p className="font-semibold text-gray-900 text-lg">
-                  {invitation.profiles.full_name}
+                  {invitation.profiles?.full_name || 'Usuario'}
                 </p>
-                <p className="text-gray-600">{invitation.profiles.email}</p>
-                {invitation.profiles.company && (
+                <p className="text-gray-600">{invitation.profiles?.email || 'Email no disponible'}</p>
+                {invitation.profiles?.company && (
                   <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
                     <Building className="w-4 h-4" />
                     {invitation.profiles.company}

@@ -98,7 +98,7 @@ export default function JoinTeamPage() {
       .from('team_invitations')
       .select(`
         *,
-        profiles:workspace_owner_id (
+        profiles:invited_by (
           full_name,
           email,
           company
@@ -109,8 +109,10 @@ export default function JoinTeamPage() {
       .single();
 
     if (error || !data) {
+      console.error('Error fetching invitation:', error);
       setError('Invitación no encontrada o ya ha sido aceptada');
     } else {
+      console.log('Invitation data:', data);
       if (new Date(data.expires_at) < new Date()) {
         setError('Esta invitación ha expirado');
       } else {

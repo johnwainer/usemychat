@@ -98,6 +98,9 @@ export default function TeamPage() {
   const [filterRole, setFilterRole] = useState<string>('all');
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const [isOwner, setIsOwner] = useState(false);
+  const [teamOwner, setTeamOwner] = useState<any>(null);
 
   useEffect(() => {
     fetchData();
@@ -105,34 +108,89 @@ export default function TeamPage() {
 
   const fetchData = async () => {
     const supabase = createClient();
-    
+
     // Get current user
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
-    
+
     setCurrentUser(user);
 
-    // Fetch team members
-    const { data: membersData, error: membersError } = await supabase
+    // Check if user is a team member (not owner)
+    const { data: memberData } = await supabase
       .from('team_members')
-      .select('*')
-      .eq('workspace_owner_id', user.id)
-      .order('created_at', { ascending: false });
+      .select('role, workspace_owner_id')
+      .eq('user_id', user.id)
+      .single();
 
-    if (!membersError && membersData) {
-      setMembers(membersData);
-    }
+    if (memberData) {
+      // User is a team member
+      setUserRole(memberData.role);
+      setIsOwner(false);
 
-    // Fetch pending invitations
-    const { data: invitationsData, error: invitationsError } = await supabase
-      .from('team_invitations')
-      .select('*')
-      .eq('workspace_owner_id', user.id)
-      .is('accepted_at', null)
-      .order('created_at', { ascending: false });
+      // Fetch owner profile
+      const { data: ownerProfile } = await supabase
+        .from('profiles')
+        .select('full_name, email, company')
+        .eq('id', memberData.workspace_owner_id)
+        .single();
 
-    if (!invitationsError && invitationsData) {
-      setInvitations(invitationsData);
+      setTeamOwner(ownerProfile);
+      // User is a team member
+      setUserRole(memberData.role);
+      setIsOwner(false);
+      setTeamOwner(memberData.profiles);
+
+      // Fetch team members from the owner's workspace
+      const { data: membersData } = await supabase
+        .from('team_members')
+        .select('*')
+        .eq('workspace_owner_id', memberData.workspace_owner_id)
+        .order('created_at', { ascending: false });
+
+      if (membersData) {
+        setMembers(membersData);
+      }
+
+      // Only admins can see invitations
+      if (memberData.role === 'admin') {
+        const { data: invitationsData } = await supabase
+          .from('team_invitations')
+          .select('*')
+          .eq('workspace_owner_id', memberData.workspace_owner_id)
+          .is('accepted_at', null)
+          .order('created_at', { ascending: false });
+
+        if (invitationsData) {
+          setInvitations(invitationsData);
+        }
+      }
+    } else {
+      // User is the owner
+      setIsOwner(true);
+      setUserRole('owner');
+
+      // Fetch team members
+      const { data: membersData, error: membersError } = await supabase
+        .from('team_members')
+        .select('*')
+        .eq('workspace_owner_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (!membersError && membersData) {
+        setMembers(membersData);
+      }
+
+      // Fetch pending invitations
+      const { data: invitationsData, error: invitationsError } = await supabase
+        .from('team_invitations')
+        .select('*')
+        .eq('workspace_owner_id', user.id)
+        .is('accepted_at', null)
+        .order('created_at', { ascending: false });
+
+      if (!invitationsError && invitationsData) {
+        setInvitations(invitationsData);
+      }
     }
 
     setLoading(false);
@@ -417,18 +475,43 @@ export default function TeamPage() {
               <option value="viewer">Observadores</option>
             </select>
           </div>
-          <button
-            onClick={() => setShowInviteModal(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 whitespace-nowrap"
-          >
-            <UserPlus className="w-5 h-5" />
-            Invitar Miembro
-          </button>
+          {(isOwner || userRole === 'admin') && (
+            <button
+              onClick={() => setShowInviteModal(true)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 whitespace-nowrap"
+            >
+              <UserPlus className="w-5 h-5" />
+              Invitar Miembro
+            </button>
+          )}
         </div>
       </div>
 
+      {/* Team Owner Info (for members) */}
+      {!isOwner && teamOwner && (
+        <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg shadow-sm border border-blue-200 p-6 mb-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <Crown className="w-5 h-5 text-purple-600" />
+            Propietario del Equipo
+          </h2>
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+              {teamOwner.full_name?.charAt(0).toUpperCase() || 'U'}
+            </div>
+            <div>
+              <p className="font-semibold text-gray-900">{teamOwner.full_name || 'Usuario'}</p>
+              <p className="text-sm text-gray-600">{teamOwner.email}</p>
+              {teamOwner.company && (
+                <p className="text-sm text-gray-500">{teamOwner.company}</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+      </div>
+
       {/* Pending Invitations */}
-      {invitations.length > 0 && (
+      {(isOwner || userRole === 'admin') && invitations.length > 0 && (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
             <Clock className="w-5 h-5 text-orange-600" />

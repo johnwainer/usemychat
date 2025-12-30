@@ -46,7 +46,8 @@ export async function updateSession(request: NextRequest) {
     '/cookies',
     '/caracteristicas',
     '/precios',
-    '/test-supabase'
+    '/test-supabase',
+    '/team/join'
   ]
 
   const isPublicRoute = publicRoutes.some(route =>

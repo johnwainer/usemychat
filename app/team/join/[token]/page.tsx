@@ -140,21 +140,31 @@ export default function JoinTeamPage() {
     const supabase = createClient();
 
     try {
-      // Create team member
-      const { error: memberError } = await supabase
+      // Check if already a member
+      const { data: existingMember } = await supabase
         .from('team_members')
-        .insert({
-          user_id: currentUser.id,
-          workspace_owner_id: invitation.workspace_owner_id,
-          role: invitation.role,
-          email: currentUser.email,
-          full_name: currentUser.user_metadata?.full_name || null,
-          avatar_url: currentUser.user_metadata?.avatar_url || null,
-          is_active: true,
-          joined_at: new Date().toISOString()
-        });
+        .select('id')
+        .eq('user_id', currentUser.id)
+        .eq('workspace_owner_id', invitation.workspace_owner_id)
+        .single();
 
-      if (memberError) throw memberError;
+      if (!existingMember) {
+        // Create team member only if not already a member
+        const { error: memberError } = await supabase
+          .from('team_members')
+          .insert({
+            user_id: currentUser.id,
+            workspace_owner_id: invitation.workspace_owner_id,
+            role: invitation.role,
+            email: currentUser.email,
+            full_name: currentUser.user_metadata?.full_name || null,
+            avatar_url: currentUser.user_metadata?.avatar_url || null,
+            is_active: true,
+            joined_at: new Date().toISOString()
+          });
+
+        if (memberError) throw memberError;
+      }
 
       // Mark invitation as accepted
       const { error: inviteError } = await supabase

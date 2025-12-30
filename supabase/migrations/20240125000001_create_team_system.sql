@@ -191,6 +191,11 @@ CREATE POLICY "Users can view invitations for their workspace"
     public.is_admin(auth.uid())
   );
 
+DROP POLICY IF EXISTS "Anyone can view invitations by token" ON public.team_invitations;
+CREATE POLICY "Anyone can view invitations by token"
+  ON public.team_invitations FOR SELECT
+  USING (true);
+
 DROP POLICY IF EXISTS "Owners and admins can create invitations" ON public.team_invitations;
 CREATE POLICY "Owners and admins can create invitations"
   ON public.team_invitations FOR INSERT

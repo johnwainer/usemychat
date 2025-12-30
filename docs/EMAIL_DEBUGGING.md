@@ -1,4 +1,4 @@
-# 🔍 Guía de Depuración - Email de Invitaciones
+un red# 🔍 Guía de Depuración - Email de Invitaciones
 
 ## ✅ Problema Resuelto
 

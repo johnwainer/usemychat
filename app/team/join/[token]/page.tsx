@@ -76,14 +76,18 @@ export default function JoinTeamPage() {
     fetchInvitation();
   }, [token]);
 
+  useEffect(() => {
+    if (!loading && invitation && !currentUser) {
+      router.push(`/register?redirect=/team/join/${token}&email=${encodeURIComponent(invitation.email)}`);
+    }
+  }, [loading, invitation, currentUser, token, router]);
+
   const fetchInvitation = async () => {
     const supabase = createClient();
-    
-    // Get current user
+
     const { data: { user } } = await supabase.auth.getUser();
     setCurrentUser(user);
 
-    // Fetch invitation
     const { data, error } = await supabase
       .from('team_invitations')
       .select(`
@@ -101,7 +105,6 @@ export default function JoinTeamPage() {
     if (error || !data) {
       setError('Invitación no encontrada o ya ha sido aceptada');
     } else {
-      // Check if invitation is expired
       if (new Date(data.expires_at) < new Date()) {
         setError('Esta invitación ha expirado');
       } else {

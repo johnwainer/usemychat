@@ -51,9 +51,56 @@
          │                     │        │
          ▼                     ▼        │
 ┌─────────────────┐   ┌─────────────────────────────────┐
-│ Muestra página  │   │ Redirige a /register            │
-│ de invitación   │   │ ?redirect=/team/join/[token]    │
-│                 │   │ &email=invitado@email.com       │
+│ Muestra página  │   │ ⚡ REDIRECCIÓN AUTOMÁTICA       │
+│ de invitación   │   │ a /register                     │
+│                 │   │ ?redirect=/team/join/[token]    │
+│ - Info del      │   │ &email=invitado@email.com       │
+│   invitador     │   │                                 │
+│ - Rol asignado  │   │ ✨ Sin necesidad de click       │
+│ - Botón         │   └─────────────────────────────────┘
+│   "Aceptar"     │                 │
+│                 │                 ▼
+│ Validación:     │   ┌─────────────────────────────────┐
+│ ✓ Email match   │   │ PÁGINA DE REGISTRO              │
+│ ✓ No expirada   │   │ - Email pre-llenado y bloqueado │
+│ ✓ No aceptada   │   │ - Banner azul "Invitación"      │
+└─────────────────┘   │ - Título adaptado               │
+         │             │ - Link a login preserva params  │
+         │             └─────────────────────────────────┘
+         │                           │
+         │                           ▼
+         │              ┌─────────────────────────────────┐
+         │              │ Usuario completa registro       │
+         │              │ - Nombre completo               │
+         │              │ - Email (bloqueado)             │
+         │              │ - Contraseña                    │
+         │              │ - Empresa (opcional)            │
+         │              └─────────────────────────────────┘
+         │                           │
+         │                           ▼
+         │              ┌─────────────────────────────────┐
+         │              │ Cuenta creada exitosamente      │
+         │              │ Redirige a: /team/join/[token]  │
+         │              └─────────────────────────────────┘
+         │                           │
+         └───────────────────────────┘
+                       │
+                       ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  ACEPTAR INVITACIÓN                                             │
+│  - Click en "Aceptar Invitación"                               │
+│  - Crea registro en team_members                               │
+│  - Marca invitación como aceptada                              │
+│  - Asigna rol al usuario                                        │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  ✅ ÉXITO                                                        │
+│  Redirige a: /dashboard?welcome=team                            │
+│  Usuario ahora es miembro del equipo                            │
+└─────────────────────────────────────────────────────────────────┘
+```
 │ - Info del      │   └─────────────────────────────────┘
 │   invitador     │                 │
 │ - Rol asignado  │                 ▼
@@ -138,12 +185,28 @@
 **Ruta:** `/team/join/[token]`
 **Archivo:** `app/team/join/[token]/page.tsx`
 
+**Flujo automático:**
+1. **Carga la invitación** desde la base de datos
+2. **Verifica autenticación** del usuario
+3. **⚡ Si NO está autenticado:** Redirige automáticamente a `/register` con email pre-llenado
+4. **Si está autenticado:** Muestra página de confirmación
+
 **Estados:**
 - **Loading:** Verificando invitación
+- **Auto-redirect:** Si no hay usuario, redirige a registro (sin mostrar botones)
 - **Error:** Invitación inválida/expirada/ya aceptada
-- **No autenticado:** Botones para Login/Registro
 - **Email no coincide:** Mensaje de error
 - **Listo para aceptar:** Botón "Aceptar Invitación"
+
+**Código clave:**
+```typescript
+// Redirección automática para usuarios no autenticados
+useEffect(() => {
+  if (!loading && invitation && !currentUser) {
+    router.push(`/register?redirect=/team/join/${token}&email=${encodeURIComponent(invitation.email)}`);
+  }
+}, [loading, invitation, currentUser, token, router]);
+```
 
 ### 4. Página de Registro
 **Ruta:** `/register`
@@ -271,6 +334,33 @@ http://localhost:3000/dashboard/team
 # 4. Copiar el link de invitación
 # 5. Abrir en navegador incógnito
 # 6. Verificar flujo completo
+
+## 🎨 Experiencia de Usuario
+
+### Flujo Optimizado
+1. **Usuario recibe email** → Click en enlace
+2. **⚡ Redirección automática** a registro (sin pasos intermedios)
+3. **Email pre-llenado y bloqueado** (no puede cambiarlo)
+4. **Banner azul** indica que es una invitación
+5. **Completa registro** → Automáticamente vuelve a aceptar invitación
+6. **¡Listo!** Ya es miembro del equipo
+
+### Indicadores Visuales
+- 🔵 **Banner azul** en login/register cuando viene de invitación
+- 📧 **Email bloqueado** con mensaje explicativo
+- ✉️ **Ícono de sobre** en página de invitación
+- 👤 **Avatar del invitador** con inicial
+- 🏢 **Empresa del invitador** (si disponible)
+- 🎯 **Rol asignado** con ícono y descripción
+- ⏰ **Fecha de expiración** visible
+- 🔒 **Indicador de seguridad**
+- ⚡ **Sin botones innecesarios** - redirección automática
+
+### Mensajes Adaptativos
+- Títulos cambian según contexto (invitación vs registro normal)
+- Mensajes de éxito personalizados
+- Links entre login/register preservan parámetros
+- Redirecciones inteligentes después de autenticación
 ```
 
 ### Testing en Producción

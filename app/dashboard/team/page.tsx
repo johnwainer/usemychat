@@ -530,7 +530,7 @@ export default function TeamPage() {
                           <RoleIcon className="w-3 h-3" />
                           {roleConfig[invitation.role].label}
                         </span>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-gray-700">
                           Expira: {new Date(invitation.expires_at).toLocaleDateString()}
                         </span>
                       </div>
@@ -547,7 +547,7 @@ export default function TeamPage() {
                     </button>
                     <button
                       onClick={() => copyInvitationLink(invitation.token)}
-                      className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                      className="p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
                       title="Copiar enlace de invitación"
                     >
                       {copiedToken === invitation.token ? (
@@ -642,12 +642,12 @@ export default function TeamPage() {
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {member.last_active_at
                         ? new Date(member.last_active_at).toLocaleDateString()
                         : 'Nunca'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {member.joined_at
                         ? new Date(member.joined_at).toLocaleDateString()
                         : 'Pendiente'}
@@ -659,7 +659,7 @@ export default function TeamPage() {
                             <select
                               value={member.role}
                               onChange={(e) => handleUpdateRole(member.id, e.target.value)}
-                              className="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              className="px-3 py-1 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             >
                               <option value="admin">Admin</option>
                               <option value="supervisor">Supervisor</option>

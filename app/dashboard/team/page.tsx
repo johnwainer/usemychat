@@ -135,10 +135,8 @@ export default function TeamPage() {
         .single();
 
       setTeamOwner(ownerProfile);
-      // User is a team member
       setUserRole(memberData.role);
       setIsOwner(false);
-      setTeamOwner(memberData.profiles);
 
       // Fetch team members from the owner's workspace
       const { data: membersData } = await supabase
@@ -508,7 +506,6 @@ export default function TeamPage() {
           </div>
         </div>
       )}
-      </div>
 
       {/* Pending Invitations */}
       {(isOwner || userRole === 'admin') && invitations.length > 0 && (

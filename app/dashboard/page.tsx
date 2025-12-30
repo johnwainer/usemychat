@@ -240,29 +240,6 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-
-      {/* Quick Actions */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <button className="flex items-center justify-center px-4 py-3 border-2 border-gray-200 rounded-lg hover:border-black transition-colors">
-            <MessageSquare className="w-5 h-5 mr-2" />
-            <span className="font-medium">Nueva Conversación</span>
-          </button>
-          <button className="flex items-center justify-center px-4 py-3 border-2 border-gray-200 rounded-lg hover:border-black transition-colors">
-            <Users className="w-5 h-5 mr-2" />
-            <span className="font-medium">Agregar Contacto</span>
-          </button>
-          <button className="flex items-center justify-center px-4 py-3 border-2 border-gray-200 rounded-lg hover:border-black transition-colors">
-            <Bot className="w-5 h-5 mr-2" />
-            <span className="font-medium">Crear Bot</span>
-          </button>
-          <button className="flex items-center justify-center px-4 py-3 border-2 border-gray-200 rounded-lg hover:border-black transition-colors">
-            <TrendingUp className="w-5 h-5 mr-2" />
-            <span className="font-medium">Ver Reportes</span>
-          </button>
-        </div>
-      </div>
     </div>
   );
 }

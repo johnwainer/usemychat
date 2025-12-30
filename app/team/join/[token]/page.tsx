@@ -78,7 +78,13 @@ export default function JoinTeamPage() {
 
   useEffect(() => {
     if (!loading && invitation && !currentUser) {
-      router.push(`/register?redirect=/team/join/${token}&email=${encodeURIComponent(invitation.email)}`);
+      const company = invitation.profiles?.company || '';
+      const params = new URLSearchParams({
+        redirect: `/team/join/${token}`,
+        email: invitation.email,
+        ...(company && { company })
+      });
+      router.push(`/register?${params.toString()}`);
     }
   }, [loading, invitation, currentUser, token, router]);
 
@@ -274,13 +280,27 @@ export default function JoinTeamPage() {
                 Debes iniciar sesión o crear una cuenta para aceptar esta invitación
               </p>
               <button
-                onClick={() => router.push(`/login?redirect=/team/join/${token}&email=${encodeURIComponent(invitation.email)}`)}
+                onClick={() => {
+                  const params = new URLSearchParams({
+                    redirect: `/team/join/${token}`,
+                    email: invitation.email
+                  });
+                  router.push(`/login?${params.toString()}`);
+                }}
                 className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
               >
                 Iniciar Sesión
               </button>
               <button
-                onClick={() => router.push(`/register?redirect=/team/join/${token}&email=${encodeURIComponent(invitation.email)}`)}
+                onClick={() => {
+                  const company = invitation.profiles?.company || '';
+                  const params = new URLSearchParams({
+                    redirect: `/team/join/${token}`,
+                    email: invitation.email,
+                    ...(company && { company })
+                  });
+                  router.push(`/register?${params.toString()}`);
+                }}
                 className="w-full px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
               >
                 Crear Cuenta

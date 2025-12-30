@@ -11,12 +11,13 @@ function RegisterForm() {
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect');
   const invitationEmail = searchParams.get('email');
+  const invitationCompany = searchParams.get('company');
   const isInvitation = redirect?.includes('/team/join/');
 
   const [formData, setFormData] = useState({
     fullName: '',
     email: invitationEmail || '',
-    company: '',
+    company: invitationCompany || '',
     phone: '',
     password: '',
     confirmPassword: '',
@@ -28,6 +29,11 @@ function RegisterForm() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Don't allow email change if it's from an invitation
     if (e.target.name === 'email' && isInvitation && invitationEmail) {
+      return;
+    }
+
+    // Don't allow company change if it's from an invitation
+    if (e.target.name === 'company' && isInvitation && invitationCompany) {
       return;
     }
 
@@ -256,7 +262,7 @@ function RegisterForm() {
 
               <div>
                 <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-2">
-                  Empresa (opcional)
+                  Empresa {isInvitation && invitationCompany ? '' : '(opcional)'}
                 </label>
                 <div className="relative">
                   <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -266,10 +272,18 @@ function RegisterForm() {
                     type="text"
                     value={formData.company}
                     onChange={handleChange}
-                    className="pl-10 w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all text-gray-900"
+                    readOnly={isInvitation && !!invitationCompany}
+                    className={`pl-10 w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all text-gray-900 ${
+                      isInvitation && invitationCompany ? 'bg-gray-50 cursor-not-allowed' : ''
+                    }`}
                     placeholder="Mi Empresa S.A."
                   />
                 </div>
+                {isInvitation && invitationCompany && (
+                  <p className="mt-1 text-xs text-gray-500">
+                    Esta empresa no puede ser modificada porque viene de la invitación
+                  </p>
+                )}
               </div>
 
               <div>

@@ -9,6 +9,7 @@ import {
   Crown,
   Eye,
   UserCog,
+  Headphones,
   CheckCircle,
   XCircle,
   Clock,

@@ -310,7 +310,12 @@ export default function TeamPage() {
     }
   };
 
-
+  const filteredMembers = members.filter(member => {
+    const matchesSearch = member.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         member.full_name?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesRole = filterRole === 'all' || member.role === filterRole;
+    return matchesSearch && matchesRole;
+  });
 
   const handleUpdateRole = async (memberId: string, newRole: string) => {
     const supabase = createClient();

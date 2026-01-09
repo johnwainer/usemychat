@@ -436,21 +436,6 @@ export default function TeamPage() {
     }
   };
 
-  const handleCancelInvitation = async (invitationId: string) => {
-    const supabase = createClient();
-    
-    const { error } = await supabase
-      .from('team_invitations')
-      .delete()
-      .eq('id', invitationId);
-
-    if (error) {
-      alert('Error al cancelar invitación: ' + error.message);
-    } else {
-      fetchData();
-    }
-  };
-
   const copyInvitationLink = (token: string) => {
     const link = `${window.location.origin}/team/join/${token}`;
     navigator.clipboard.writeText(link);

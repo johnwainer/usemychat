@@ -13,7 +13,8 @@ import {
   Shield,
   UserCog,
   Headphones,
-  Eye
+  Eye,
+  X
 } from 'lucide-react';
 
 interface Channel {
@@ -188,7 +189,7 @@ export default function ChannelsPage() {
 
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         {channels.length === 0 ? (
-          <div className="text-center py-10 text-gray-500">Acn no has agregado canales</div>
+          <div className="text-center py-10 text-gray-500">Afan no has agregado canales</div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {channels.map((channel) => {
@@ -209,7 +210,7 @@ export default function ChannelsPage() {
                     </span>
                   </div>
                   <div className="flex flex-wrap gap-2 text-xs text-gray-600">
-                    <span className="px-2 py-1 bg-gray-100 rounded-full">Distribucin: {channel.distribution === 'team' ? 'Equipo completo' : 'Asignados'}</span>
+                    <span className="px-2 py-1 bg-gray-100 rounded-full">Distribucif3n: {channel.distribution === 'team' ? 'Equipo completo' : 'Asignados'}</span>
                     {channel.automation_enabled && <span className="px-2 py-1 bg-amber-100 text-amber-700 rounded-full">Automatizaciones</span>}
                     {channel.auto_reply_enabled && <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full">Auto-respuestas</span>}
                   </div>
@@ -226,7 +227,7 @@ export default function ChannelsPage() {
             <div className="p-6 border-b border-gray-200 flex items-center justify-between">
               <h2 className="text-xl font-bold text-gray-900">Agregar canal</h2>
               <button onClick={() => setShowModal(false)} className="text-gray-500 hover:text-gray-700">
-                <Share2 className="w-5 h-5" />
+                <X className="w-5 h-5" />
               </button>
             </div>
             <div className="p-6 space-y-6">
@@ -274,7 +275,7 @@ export default function ChannelsPage() {
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Distribucin</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Distribucif3n</label>
                   <div className="space-y-2">
                     <label className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer ${form.distribution === 'team' ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200'}`}>
                       <input
@@ -335,7 +336,7 @@ export default function ChannelsPage() {
                   />
                   <div>
                     <p className="font-medium text-gray-900 text-sm">Automatizaciones</p>
-                    <p className="text-xs text-gray-600">Habilita flujos y mensajes automaticos</p>
+                    <p className="text-xs text-gray-600">Habilita flujos y mensajes autome1ticos</p>
                   </div>
                 </label>
                 <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer">
@@ -346,7 +347,7 @@ export default function ChannelsPage() {
                   />
                   <div>
                     <p className="font-medium text-gray-900 text-sm">Auto-replies</p>
-                    <p className="text-xs text-gray-600">Respuestas instantaneas para fuera de horario</p>
+                    <p className="text-xs text-gray-600">Respuestas instante1neas para fuera de horario</p>
                   </div>
                 </label>
               </div>

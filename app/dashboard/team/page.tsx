@@ -9,7 +9,6 @@ import {
   Crown,
   Eye,
   UserCog,
-  Headphones,
   CheckCircle,
   XCircle,
   Clock,
@@ -95,14 +94,6 @@ export default function TeamPage() {
   const [isOwner, setIsOwner] = useState(false);
   const [teamOwner, setTeamOwner] = useState<any>(null);
   const [workspaceOwnerId, setWorkspaceOwnerId] = useState<string | null>(null);
-  const [channelForm, setChannelForm] = useState({
-    platform: 'whatsapp' as Channel['platform'],
-    name: '',
-    distribution: 'team' as 'team' | 'selected',
-    assigned_member_ids: [] as string[],
-    automation_enabled: true,
-    auto_reply_enabled: false
-  });
 
   useEffect(() => {
     fetchData();
@@ -161,14 +152,6 @@ export default function TeamPage() {
           setInvitations(invitationsData);
         }
       }
-
-      const { data: channelsData } = await supabase
-        .from('channels')
-        .select('*')
-        .eq('workspace_owner_id', memberData.workspace_owner_id)
-        .order('created_at', { ascending: false });
-
-      if (channelsData) setChannels(channelsData as Channel[]);
     } else {
       // User is the owner
       setIsOwner(true);
@@ -326,41 +309,7 @@ export default function TeamPage() {
     }
   };
 
-  const handleCreateChannel = async () => {
-    if (!workspaceOwnerId) return;
-    setSending(true);
 
-    const supabase = createClient();
-    const payload = {
-      workspace_owner_id: workspaceOwnerId,
-      platform: channelForm.platform,
-      name: channelForm.name || platformConfig[channelForm.platform].label,
-      status: 'active',
-      assigned_member_ids: channelForm.distribution === 'selected' ? channelForm.assigned_member_ids : members.map(m => m.id),
-      distribution: channelForm.distribution,
-      automation_enabled: channelForm.automation_enabled,
-      auto_reply_enabled: channelForm.auto_reply_enabled
-    };
-
-    const { error } = await supabase.from('channels').insert(payload);
-
-    if (error) {
-      alert('Error al crear canal: ' + error.message);
-    } else {
-      setShowChannelModal(false);
-      setChannelForm({
-        platform: 'whatsapp',
-        name: '',
-        distribution: 'team',
-        assigned_member_ids: [],
-        automation_enabled: true,
-        auto_reply_enabled: false
-      });
-      fetchData();
-    }
-
-    setSending(false);
-  };
 
   const handleUpdateRole = async (memberId: string, newRole: string) => {
     const supabase = createClient();
@@ -381,7 +330,7 @@ export default function TeamPage() {
     if (!confirm('¿Estás seguro de que deseas eliminar este miembro del equipo?')) return;
 
     const supabase = createClient();
-    
+
     const { error } = await supabase
       .from('team_members')
       .delete()
@@ -401,15 +350,6 @@ export default function TeamPage() {
     setTimeout(() => setCopiedToken(null), 2000);
   };
 
-  const filteredMembers = members.filter(member => {
-    const matchesSearch = member.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         member.full_name?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRole = filterRole === 'all' || member.role === filterRole;
-    return matchesSearch && matchesRole;
-  });
-
-  const canManageChannels = isOwner || userRole === 'admin' || userRole === 'supervisor';
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -420,73 +360,6 @@ export default function TeamPage() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Gestión de Equipo</h1>
-          <p className="text-gray-600">Administra los miembros de tu equipo y sus permisos</p>
-        </div>
-        <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
-          {canManageChannels && (
-            <button
-              onClick={() => setShowChannelModal(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
-            >
-              <Share2 className="w-4 h-4" />
-              Agregar canal
-            </button>
-          )}
-          {(isOwner || userRole === 'admin') && (
-            <button
-              onClick={() => setShowInviteModal(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <Send className="w-4 h-4" />
-              Invitar miembro
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Channels */}
-      {canManageChannels && (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900">Canales conectados</h2>
-              <p className="text-sm text-gray-600">Agrega y administra canales ilimitados</p>
-            </div>
-            <button
-              onClick={() => setShowChannelModal(true)}
-              className="inline-flex items-center gap-2 px-3 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
-            >
-              <Sparkles className="w-4 h-4" />
-              Nuevo canal
-            </button>
-          </div>
-          {channels.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">Aún no has agregado canales</div>
-          ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {channels.map((channel) => {
-                const cfg = platformConfig[channel.platform];
-                const Icon = cfg.icon;
-                return (
-                  <div key={channel.id} className="border border-gray-200 rounded-lg p-4 flex flex-col gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${cfg.bg}`}>
-                        <Icon className={`w-5 h-5 ${cfg.color}`} />
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-semibold text-gray-900">{channel.name}</p>
-                        <p className="text-sm text-gray-600">{cfg.label}</p>
-                      </div>
-                      <span className={`text-xs px-2 py-1 rounded-full ${channel.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
-                        {channel.status === 'active' ? 'Activo' : 'Inactivo'}
-                      </span>
-                    </div>
-                    <div className="flex flex-wrap gap-2 text-xs text-gray-600">
-                      <span className="px-2 py-1 bg-gray-100 rounded-full">Distribución: {channel.distribution === 'team' ? 'Equipo completo' : 'Asignados'}</span>
       <div className="mb-8">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Gestión de Equipo</h1>

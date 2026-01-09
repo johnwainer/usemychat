@@ -53,6 +53,15 @@ const roleConfig = {
   viewer: { label: 'Observador', icon: Eye, color: 'text-gray-600', bgColor: 'bg-gray-100' }
 };
 
+const defaultForm = (members: TeamMember[]) => ({
+  platform: 'whatsapp' as Channel['platform'],
+  name: '',
+  distribution: 'team' as 'team' | 'selected',
+  assigned_member_ids: members.map(m => m.id),
+  automation_enabled: true,
+  auto_reply_enabled: false
+});
+
 export default function ChannelsPage() {
   const [channels, setChannels] = useState<Channel[]>([]);
   const [members, setMembers] = useState<TeamMember[]>([]);
@@ -61,16 +70,19 @@ export default function ChannelsPage() {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [form, setForm] = useState({
-    platform: 'whatsapp' as Channel['platform'],
-    name: '',
-    distribution: 'team' as 'team' | 'selected',
-    assigned_member_ids: [] as string[],
-    automation_enabled: true,
-    auto_reply_enabled: false
-  });
+  const [editingChannel, setEditingChannel] = useState<Channel | null>(null);
+  const [form, setForm] = useState(defaultForm([]));
 
   const canEdit = userRole === 'owner' || userRole === 'admin' || userRole === 'supervisor';
+
+  const refreshChannels = async (supabase: ReturnType<typeof createClient>, ownerId: string) => {
+    const { data: channelsData } = await supabase
+      .from('channels')
+      .select('*')
+      .eq('workspace_owner_id', ownerId)
+      .order('created_at', { ascending: false });
+    if (channelsData) setChannels(channelsData as Channel[]);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -101,7 +113,10 @@ export default function ChannelsPage() {
         ]);
 
         if (channelsData) setChannels(channelsData as Channel[]);
-        if (membersData) setMembers(membersData as TeamMember[]);
+        if (membersData) {
+          setMembers(membersData as TeamMember[]);
+          setForm(defaultForm(membersData as TeamMember[]));
+        }
       } else {
         setUserRole('owner');
         setWorkspaceOwnerId(user.id);
@@ -119,7 +134,10 @@ export default function ChannelsPage() {
         ]);
 
         if (channelsData) setChannels(channelsData as Channel[]);
-        if (membersData) setMembers(membersData as TeamMember[]);
+        if (membersData) {
+          setMembers(membersData as TeamMember[]);
+          setForm(defaultForm(membersData as TeamMember[]));
+        }
       }
 
       setLoading(false);
@@ -128,7 +146,26 @@ export default function ChannelsPage() {
     fetchData();
   }, []);
 
-  const handleCreateChannel = async () => {
+  const handleOpenCreate = () => {
+    setEditingChannel(null);
+    setForm(defaultForm(members));
+    setShowModal(true);
+  };
+
+  const handleOpenEdit = (channel: Channel) => {
+    setEditingChannel(channel);
+    setForm({
+      platform: channel.platform,
+      name: channel.name,
+      distribution: channel.distribution || 'team',
+      assigned_member_ids: channel.distribution === 'selected' ? channel.assigned_member_ids || [] : members.map(m => m.id),
+      automation_enabled: channel.automation_enabled ?? true,
+      auto_reply_enabled: channel.auto_reply_enabled ?? false
+    });
+    setShowModal(true);
+  };
+
+  const handleSaveChannel = async () => {
     if (!workspaceOwnerId || !canEdit) return;
     setSending(true);
 
@@ -144,21 +181,39 @@ export default function ChannelsPage() {
       auto_reply_enabled: form.auto_reply_enabled
     };
 
-    const { error } = await supabase.from('channels').insert(payload);
+    const action = editingChannel
+      ? supabase.from('channels').update(payload).eq('id', editingChannel.id).eq('workspace_owner_id', workspaceOwnerId)
+      : supabase.from('channels').insert(payload);
+
+    const { error } = await action;
     if (!error) {
       setShowModal(false);
-      setForm({ platform: 'whatsapp', name: '', distribution: 'team', assigned_member_ids: [], automation_enabled: true, auto_reply_enabled: false });
-      const { data: channelsData } = await supabase
-        .from('channels')
-        .select('*')
-        .eq('workspace_owner_id', workspaceOwnerId)
-        .order('created_at', { ascending: false });
-      if (channelsData) setChannels(channelsData as Channel[]);
+      setEditingChannel(null);
+      setForm(defaultForm(members));
+      await refreshChannels(supabase, workspaceOwnerId);
     } else {
-      alert('Error al crear canal: ' + error.message);
+      alert('Error al guardar canal: ' + error.message);
     }
 
     setSending(false);
+  };
+
+  const handleDeleteChannel = async (channelId: string) => {
+    if (!workspaceOwnerId || !canEdit) return;
+    if (!confirm('¿Eliminar este canal?')) return;
+
+    const supabase = createClient();
+    const { error } = await supabase
+      .from('channels')
+      .delete()
+      .eq('id', channelId)
+      .eq('workspace_owner_id', workspaceOwnerId);
+
+    if (error) {
+      alert('Error al eliminar canal: ' + error.message);
+    } else {
+      await refreshChannels(supabase, workspaceOwnerId);
+    }
   };
 
   if (loading) {
@@ -178,7 +233,7 @@ export default function ChannelsPage() {
         </div>
         {canEdit && (
           <button
-            onClick={() => setShowModal(true)}
+            onClick={handleOpenCreate}
             className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
           >
             <Share2 className="w-4 h-4" />
@@ -189,7 +244,7 @@ export default function ChannelsPage() {
 
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         {channels.length === 0 ? (
-          <div className="text-center py-10 text-gray-500">Aan no has agregado canales</div>
+          <div className="text-center py-10 text-gray-500">Aún no has agregado canales</div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {channels.map((channel) => {
@@ -197,23 +252,43 @@ export default function ChannelsPage() {
               const Icon = cfg.icon;
               return (
                 <div key={channel.id} className="border border-gray-200 rounded-lg p-4 flex flex-col gap-3">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-start gap-3">
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center ${cfg.bg}`}>
                       <Icon className={`w-5 h-5 ${cfg.color}`} />
                     </div>
                     <div className="flex-1">
-                      <p className="font-semibold text-gray-900">{channel.name}</p>
-                      <p className="text-sm text-gray-600">{cfg.label}</p>
+                      <div className="flex items-center justify-between gap-2">
+                        <div>
+                          <p className="font-semibold text-gray-900">{channel.name}</p>
+                          <p className="text-sm text-gray-600">{cfg.label}</p>
+                        </div>
+                        <span className={`text-xs px-2 py-1 rounded-full ${channel.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
+                          {channel.status === 'active' ? 'Activo' : 'Inactivo'}
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-2 text-xs text-gray-600 mt-2">
+                        <span className="px-2 py-1 bg-gray-100 rounded-full">Distribución: {channel.distribution === 'team' ? 'Equipo completo' : 'Asignados'}</span>
+                        {channel.automation_enabled && <span className="px-2 py-1 bg-amber-100 text-amber-700 rounded-full">Automatizaciones</span>}
+                        {channel.auto_reply_enabled && <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full">Auto-respuestas</span>}
+                      </div>
                     </div>
-                    <span className={`text-xs px-2 py-1 rounded-full ${channel.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
-                      {channel.status === 'active' ? 'Activo' : 'Inactivo'}
-                    </span>
                   </div>
-                  <div className="flex flex-wrap gap-2 text-xs text-gray-600">
-                    <span className="px-2 py-1 bg-gray-100 rounded-full">Distribucif3n: {channel.distribution === 'team' ? 'Equipo completo' : 'Asignados'}</span>
-                    {channel.automation_enabled && <span className="px-2 py-1 bg-amber-100 text-amber-700 rounded-full">Automatizaciones</span>}
-                    {channel.auto_reply_enabled && <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full">Auto-respuestas</span>}
-                  </div>
+                  {canEdit && (
+                    <div className="flex justify-end gap-2">
+                      <button
+                        onClick={() => handleOpenEdit(channel)}
+                        className="px-3 py-1 text-sm text-emerald-700 border border-emerald-200 rounded-lg hover:bg-emerald-50"
+                      >
+                        Editar
+                      </button>
+                      <button
+                        onClick={() => handleDeleteChannel(channel.id)}
+                        className="px-3 py-1 text-sm text-red-700 border border-red-200 rounded-lg hover:bg-red-50"
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -225,8 +300,8 @@ export default function ChannelsPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-2xl w-full">
             <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-gray-900">Agregar canal</h2>
-              <button onClick={() => setShowModal(false)} className="text-gray-500 hover:text-gray-700">
+              <h2 className="text-xl font-bold text-gray-900">{editingChannel ? 'Editar canal' : 'Agregar canal'}</h2>
+              <button onClick={() => { setShowModal(false); setEditingChannel(null); }} className="text-gray-500 hover:text-gray-700">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -275,7 +350,7 @@ export default function ChannelsPage() {
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Distribucif3n</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Distribución</label>
                   <div className="space-y-2">
                     <label className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer ${form.distribution === 'team' ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200'}`}>
                       <input
@@ -336,7 +411,7 @@ export default function ChannelsPage() {
                   />
                   <div>
                     <p className="font-medium text-gray-900 text-sm">Automatizaciones</p>
-                    <p className="text-xs text-gray-600">Habilita flujos y mensajes automa1ticos</p>
+                    <p className="text-xs text-gray-600">Habilita flujos y mensajes automáticos</p>
                   </div>
                 </label>
                 <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer">
@@ -347,7 +422,7 @@ export default function ChannelsPage() {
                   />
                   <div>
                     <p className="font-medium text-gray-900 text-sm">Auto-replies</p>
-                    <p className="text-xs text-gray-600">Respuestas instanta1neas para fuera de horario</p>
+                    <p className="text-xs text-gray-600">Respuestas instantáneas para fuera de horario</p>
                   </div>
                 </label>
               </div>
@@ -355,7 +430,7 @@ export default function ChannelsPage() {
               <div className="flex justify-end gap-3">
                 <button
                   type="button"
-                  onClick={() => setShowModal(false)}
+                  onClick={() => { setShowModal(false); setEditingChannel(null); }}
                   className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
                 >
                   Cancelar
@@ -363,7 +438,7 @@ export default function ChannelsPage() {
                 <button
                   type="button"
                   disabled={sending || !form.name.trim()}
-                  onClick={handleCreateChannel}
+                  onClick={handleSaveChannel}
                   className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors disabled:bg-gray-400 flex items-center gap-2"
                 >
                   {sending ? (
@@ -374,7 +449,7 @@ export default function ChannelsPage() {
                   ) : (
                     <>
                       <Share2 className="w-4 h-4" />
-                      Guardar canal
+                      {editingChannel ? 'Actualizar canal' : 'Guardar canal'}
                     </>
                   )}
                 </button>

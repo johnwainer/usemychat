@@ -40,6 +40,7 @@ interface TeamMember {
 interface WhatsAppConnection {
   id: string;
   workspace_owner_id: string;
+  channel_id: string;
   phone_number: string | null;
   status: 'disconnected' | 'pending' | 'connected' | 'error';
   qr_code?: string | null;
@@ -81,9 +82,9 @@ export default function ChannelsPage() {
   const [sending, setSending] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [editingChannel, setEditingChannel] = useState<Channel | null>(null);
-  const [whatsappConnection, setWhatsappConnection] = useState<WhatsAppConnection | null>(null);
-  const [waNumber, setWaNumber] = useState('');
-  const [waSaving, setWaSaving] = useState(false);
+  const [waConnections, setWaConnections] = useState<Record<string, WhatsAppConnection>>({});
+  const [waNumbers, setWaNumbers] = useState<Record<string, string>>({});
+  const [waSaving, setWaSaving] = useState<Record<string, boolean>>({});
   const [form, setForm] = useState(defaultForm([]));
 
   const canEdit = userRole === 'owner' || userRole === 'admin' || userRole === 'supervisor';
@@ -102,14 +103,43 @@ export default function ChannelsPage() {
     const { data } = await supabase
       .from('whatsapp_connections')
       .select('*')
-      .eq('workspace_owner_id', ownerId)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single();
+      .eq('workspace_owner_id', ownerId);
+
     if (data) {
-      setWhatsappConnection(data as WhatsAppConnection);
-      setWaNumber(data.phone_number || '');
+      const map: Record<string, WhatsAppConnection> = {};
+      const nums: Record<string, string> = {};
+      (data as WhatsAppConnection[]).forEach((conn) => {
+        map[conn.channel_id] = conn;
+        if (conn.phone_number) nums[conn.channel_id] = conn.phone_number;
+      });
+      setWaConnections(map);
+      setWaNumbers(nums);
     }
+  };
+
+  const handleStartWhatsapp = async (channelId: string) => {
+    if (!workspaceOwnerId || !canEdit) return;
+    const number = waNumbers[channelId] || '';
+    setWaSaving(prev => ({ ...prev, [channelId]: true }));
+    const supabase = createClient();
+    const { error } = await supabase.rpc('start_whatsapp_connection', {
+      p_workspace_owner_id: workspaceOwnerId,
+      p_channel_id: channelId,
+      p_phone_number: number || null
+    });
+    if (error) {
+      alert('Error al iniciar conexión: ' + error.message);
+    } else {
+      await handleFetchWhatsappStatus(workspaceOwnerId);
+    }
+    setWaSaving(prev => ({ ...prev, [channelId]: false }));
+  };
+
+  const handleRefreshWhatsapp = async (channelId: string) => {
+    if (!workspaceOwnerId) return;
+    setWaSaving(prev => ({ ...prev, [channelId]: true }));
+    await handleFetchWhatsappStatus(workspaceOwnerId);
+    setWaSaving(prev => ({ ...prev, [channelId]: false }));
   };
 
   useEffect(() => {
@@ -246,27 +276,6 @@ export default function ChannelsPage() {
     }
   };
 
-  const handleStartWhatsapp = async () => {
-    if (!workspaceOwnerId || !canEdit) return;
-    setWaSaving(true);
-    const supabase = createClient();
-    const { error } = await supabase.rpc('start_whatsapp_connection', {
-      p_workspace_owner_id: workspaceOwnerId,
-      p_phone_number: waNumber || null
-    });
-    if (error) {
-      alert('Error al iniciar conexión: ' + error.message);
-    } else {
-      await handleFetchWhatsappStatus(workspaceOwnerId);
-    }
-    setWaSaving(false);
-  };
-
-  const handleRefreshWhatsapp = async () => {
-    if (!workspaceOwnerId) return;
-    await handleFetchWhatsappStatus(workspaceOwnerId);
-  };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -293,61 +302,6 @@ export default function ChannelsPage() {
         )}
       </div>
 
-      {canEdit && (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900">WhatsApp Business</h2>
-              <p className="text-sm text-gray-600">Conecta tu número oficial para enviar y recibir mensajes.</p>
-            </div>
-            <span className={`text-xs px-3 py-1 rounded-full ${whatsappConnection?.status === 'connected' ? 'bg-green-100 text-green-700' : whatsappConnection?.status === 'pending' ? 'bg-amber-100 text-amber-700' : whatsappConnection?.status === 'error' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'}`}>
-              {whatsappConnection?.status === 'connected' && 'Conectado'}
-              {whatsappConnection?.status === 'pending' && 'Pendiente'}
-              {whatsappConnection?.status === 'error' && 'Error'}
-              {!whatsappConnection && 'Sin configurar'}
-            </span>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-3">
-              <label className="block text-sm font-medium text-gray-700">Número de WhatsApp</label>
-              <input
-                type="text"
-                value={waNumber}
-                onChange={(e) => setWaNumber(e.target.value)}
-                placeholder="Ej. +525511223344"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-gray-900"
-              />
-              {whatsappConnection?.error_message && (
-                <p className="text-sm text-red-600">{whatsappConnection.error_message}</p>
-              )}
-            </div>
-            <div className="flex flex-col gap-2 justify-end sm:items-end">
-              <div className="flex gap-2">
-                <button
-                  onClick={handleStartWhatsapp}
-                  disabled={waSaving}
-                  className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-60"
-                >
-                  {whatsappConnection?.status === 'connected' ? 'Actualizar número' : 'Conectar número'}
-                </button>
-                <button
-                  onClick={handleRefreshWhatsapp}
-                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  Actualizar estado
-                </button>
-              </div>
-              {whatsappConnection?.qr_code && whatsappConnection.status === 'pending' && (
-                <div className="mt-2 text-center">
-                  <p className="text-sm text-gray-600 mb-2">Escanea el QR para finalizar la conexión</p>
-                  <img src={whatsappConnection.qr_code} alt="QR de conexión" className="mx-auto w-40 h-40 border rounded" />
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         {channels.length === 0 ? (
           <div className="text-center py-10 text-gray-500">Aún no has agregado canales</div>
@@ -356,6 +310,8 @@ export default function ChannelsPage() {
             {channels.map((channel) => {
               const cfg = platformConfig[channel.platform];
               const Icon = cfg.icon;
+              const waConn = waConnections[channel.id];
+              const waNumber = waNumbers[channel.id] || '';
               return (
                 <div key={channel.id} className="border border-gray-200 rounded-lg p-4 flex flex-col gap-3">
                   <div className="flex items-start gap-3">
@@ -379,6 +335,53 @@ export default function ChannelsPage() {
                       </div>
                     </div>
                   </div>
+
+                  {channel.platform === 'whatsapp' && canEdit && (
+                    <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-gray-800 flex flex-col gap-3">
+                      <div className="flex items-center justify-between">
+                        <span className="font-semibold text-gray-900">WhatsApp Business</span>
+                        <span className={`text-xs px-2 py-1 rounded-full ${waConn?.status === 'connected' ? 'bg-green-100 text-green-700' : waConn?.status === 'pending' ? 'bg-amber-100 text-amber-700' : waConn?.status === 'error' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'}`}>
+                          {waConn?.status === 'connected' && 'Conectado'}
+                          {waConn?.status === 'pending' && 'Pendiente'}
+                          {waConn?.status === 'error' && 'Error'}
+                          {!waConn && 'Sin configurar'}
+                        </span>
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <label className="text-xs text-gray-600">Número de WhatsApp</label>
+                        <input
+                          type="text"
+                          value={waNumber}
+                          onChange={(e) => setWaNumbers(prev => ({ ...prev, [channel.id]: e.target.value }))}
+                          placeholder="Ej. +525511223344"
+                          className="w-full px-3 py-2 border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-gray-900"
+                        />
+                        {waConn?.error_message && <p className="text-xs text-red-600">{waConn.error_message}</p>}
+                      </div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <button
+                          onClick={() => handleStartWhatsapp(channel.id)}
+                          disabled={!!waSaving[channel.id]}
+                          className="px-3 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-60"
+                        >
+                          {waConn?.status === 'connected' ? 'Actualizar número' : 'Conectar número'}
+                        </button>
+                        <button
+                          onClick={() => handleRefreshWhatsapp(channel.id)}
+                          className="px-3 py-2 border border-emerald-200 text-emerald-700 rounded-lg hover:bg-emerald-50 transition-colors"
+                        >
+                          Actualizar estado
+                        </button>
+                      </div>
+                      {waConn?.qr_code && waConn.status === 'pending' && (
+                        <div className="mt-1 text-center">
+                          <p className="text-xs text-gray-600 mb-2">Escanea el QR para finalizar la conexión</p>
+                          <img src={waConn.qr_code} alt="QR de conexión" className="mx-auto w-32 h-32 border rounded" />
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   {canEdit && (
                     <div className="flex justify-end gap-2">
                       <button

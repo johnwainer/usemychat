@@ -16,14 +16,7 @@ import {
   Send,
   Copy,
   Check,
-  RefreshCw,
-  MessageCircle,
-  Facebook,
-  Instagram,
-  Linkedin,
-  Music4,
-  Sparkles,
-  Share2
+  RefreshCw
 } from 'lucide-react';
 
 interface TeamMember {
@@ -46,19 +39,6 @@ interface TeamInvitation {
   invited_by: string;
   token: string;
   expires_at: string;
-  created_at: string;
-}
-
-interface Channel {
-  id: string;
-  platform: 'whatsapp' | 'facebook' | 'instagram' | 'linkedin' | 'tiktok';
-  name: string;
-  status: 'active' | 'inactive';
-  workspace_owner_id: string;
-  assigned_member_ids: string[] | null;
-  distribution?: 'team' | 'selected';
-  automation_enabled?: boolean;
-  auto_reply_enabled?: boolean;
   created_at: string;
 }
 
@@ -100,21 +80,11 @@ const roleConfig = {
   }
 };
 
-const platformConfig: Record<Channel['platform'], { label: string; icon: any; color: string; bg: string }> = {
-  whatsapp: { label: 'WhatsApp', icon: MessageCircle, color: 'text-green-600', bg: 'bg-green-50' },
-  facebook: { label: 'Facebook', icon: Facebook, color: 'text-blue-600', bg: 'bg-blue-50' },
-  instagram: { label: 'Instagram', icon: Instagram, color: 'text-pink-600', bg: 'bg-pink-50' },
-  linkedin: { label: 'LinkedIn', icon: Linkedin, color: 'text-sky-700', bg: 'bg-sky-50' },
-  tiktok: { label: 'TikTok', icon: Music4, color: 'text-gray-900', bg: 'bg-gray-100' }
-};
-
 export default function TeamPage() {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [invitations, setInvitations] = useState<TeamInvitation[]>([]);
-  const [channels, setChannels] = useState<Channel[]>([]);
   const [loading, setLoading] = useState(true);
   const [showInviteModal, setShowInviteModal] = useState(false);
-  const [showChannelModal, setShowChannelModal] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState<'admin' | 'supervisor' | 'agent' | 'viewer'>('agent');
   const [sending, setSending] = useState(false);
@@ -214,18 +184,6 @@ export default function TeamPage() {
 
       if (!membersError && membersData) {
         setMembers(membersData);
-      }
-
-      // Fetch pending invitations
-      const { data: invitationsData, error: invitationsError } = await supabase
-        .from('team_invitations')
-        .select('*')
-        .eq('workspace_owner_id', user.id)
-        .is('accepted_at', null)
-        .order('created_at', { ascending: false });
-
-      if (!invitationsError && invitationsData) {
-        setInvitations(invitationsData);
       }
     }
 
@@ -529,17 +487,6 @@ export default function TeamPage() {
                     </div>
                     <div className="flex flex-wrap gap-2 text-xs text-gray-600">
                       <span className="px-2 py-1 bg-gray-100 rounded-full">Distribución: {channel.distribution === 'team' ? 'Equipo completo' : 'Asignados'}</span>
-                      {channel.automation_enabled && <span className="px-2 py-1 bg-amber-100 text-amber-700 rounded-full">Automatizaciones</span>}
-                      {channel.auto_reply_enabled && <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full">Auto-respuestas</span>}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      )}
-
       <div className="mb-8">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Gestión de Equipo</h1>

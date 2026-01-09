@@ -16,7 +16,14 @@ import {
   Send,
   Copy,
   Check,
-  RefreshCw
+  RefreshCw,
+  MessageCircle,
+  Facebook,
+  Instagram,
+  Linkedin,
+  Music4,
+  Sparkles,
+  Share2
 } from 'lucide-react';
 
 interface TeamMember {
@@ -39,6 +46,19 @@ interface TeamInvitation {
   invited_by: string;
   token: string;
   expires_at: string;
+  created_at: string;
+}
+
+interface Channel {
+  id: string;
+  platform: 'whatsapp' | 'facebook' | 'instagram' | 'linkedin' | 'tiktok';
+  name: string;
+  status: 'active' | 'inactive';
+  workspace_owner_id: string;
+  assigned_member_ids: string[] | null;
+  distribution?: 'team' | 'selected';
+  automation_enabled?: boolean;
+  auto_reply_enabled?: boolean;
   created_at: string;
 }
 
@@ -80,11 +100,21 @@ const roleConfig = {
   }
 };
 
+const platformConfig: Record<Channel['platform'], { label: string; icon: any; color: string; bg: string }> = {
+  whatsapp: { label: 'WhatsApp', icon: MessageCircle, color: 'text-green-600', bg: 'bg-green-50' },
+  facebook: { label: 'Facebook', icon: Facebook, color: 'text-blue-600', bg: 'bg-blue-50' },
+  instagram: { label: 'Instagram', icon: Instagram, color: 'text-pink-600', bg: 'bg-pink-50' },
+  linkedin: { label: 'LinkedIn', icon: Linkedin, color: 'text-sky-700', bg: 'bg-sky-50' },
+  tiktok: { label: 'TikTok', icon: Music4, color: 'text-gray-900', bg: 'bg-gray-100' }
+};
+
 export default function TeamPage() {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [invitations, setInvitations] = useState<TeamInvitation[]>([]);
+  const [channels, setChannels] = useState<Channel[]>([]);
   const [loading, setLoading] = useState(true);
   const [showInviteModal, setShowInviteModal] = useState(false);
+  const [showChannelModal, setShowChannelModal] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState<'admin' | 'supervisor' | 'agent' | 'viewer'>('agent');
   const [sending, setSending] = useState(false);
@@ -94,6 +124,15 @@ export default function TeamPage() {
   const [userRole, setUserRole] = useState<string | null>(null);
   const [isOwner, setIsOwner] = useState(false);
   const [teamOwner, setTeamOwner] = useState<any>(null);
+  const [workspaceOwnerId, setWorkspaceOwnerId] = useState<string | null>(null);
+  const [channelForm, setChannelForm] = useState({
+    platform: 'whatsapp' as Channel['platform'],
+    name: '',
+    distribution: 'team' as 'team' | 'selected',
+    assigned_member_ids: [] as string[],
+    automation_enabled: true,
+    auto_reply_enabled: false
+  });
 
   useEffect(() => {
     fetchData();
@@ -117,6 +156,7 @@ export default function TeamPage() {
       // User is a team member
       setUserRole(memberData.role);
       setIsOwner(false);
+      setWorkspaceOwnerId(memberData.workspace_owner_id);
 
       // Fetch owner profile
       const { data: ownerProfile } = await supabase
@@ -151,10 +191,19 @@ export default function TeamPage() {
           setInvitations(invitationsData);
         }
       }
+
+      const { data: channelsData } = await supabase
+        .from('channels')
+        .select('*')
+        .eq('workspace_owner_id', memberData.workspace_owner_id)
+        .order('created_at', { ascending: false });
+
+      if (channelsData) setChannels(channelsData as Channel[]);
     } else {
       // User is the owner
       setIsOwner(true);
       setUserRole('owner');
+      setWorkspaceOwnerId(user.id);
 
       // Fetch team members
       const { data: membersData, error: membersError } = await supabase
@@ -304,9 +353,60 @@ export default function TeamPage() {
     setSending(false);
   };
 
+  const handleCancelInvitation = async (invitationId: string) => {
+    const supabase = createClient();
+
+    const { error } = await supabase
+      .from('team_invitations')
+      .delete()
+      .eq('id', invitationId);
+
+    if (error) {
+      alert('Error al cancelar invitación: ' + error.message);
+    } else {
+      fetchData();
+    }
+  };
+
+  const handleCreateChannel = async () => {
+    if (!workspaceOwnerId) return;
+    setSending(true);
+
+    const supabase = createClient();
+    const payload = {
+      workspace_owner_id: workspaceOwnerId,
+      platform: channelForm.platform,
+      name: channelForm.name || platformConfig[channelForm.platform].label,
+      status: 'active',
+      assigned_member_ids: channelForm.distribution === 'selected' ? channelForm.assigned_member_ids : members.map(m => m.id),
+      distribution: channelForm.distribution,
+      automation_enabled: channelForm.automation_enabled,
+      auto_reply_enabled: channelForm.auto_reply_enabled
+    };
+
+    const { error } = await supabase.from('channels').insert(payload);
+
+    if (error) {
+      alert('Error al crear canal: ' + error.message);
+    } else {
+      setShowChannelModal(false);
+      setChannelForm({
+        platform: 'whatsapp',
+        name: '',
+        distribution: 'team',
+        assigned_member_ids: [],
+        automation_enabled: true,
+        auto_reply_enabled: false
+      });
+      fetchData();
+    }
+
+    setSending(false);
+  };
+
   const handleUpdateRole = async (memberId: string, newRole: string) => {
     const supabase = createClient();
-    
+
     const { error } = await supabase
       .from('team_members')
       .update({ role: newRole })
@@ -365,6 +465,8 @@ export default function TeamPage() {
     return matchesSearch && matchesRole;
   });
 
+  const canManageChannels = isOwner || userRole === 'admin' || userRole === 'supervisor';
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -378,6 +480,80 @@ export default function TeamPage() {
       {/* Header */}
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Gestión de Equipo</h1>
+          <p className="text-gray-600">Administra los miembros de tu equipo y sus permisos</p>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+          {canManageChannels && (
+            <button
+              onClick={() => setShowChannelModal(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+            >
+              <Share2 className="w-4 h-4" />
+              Agregar canal
+            </button>
+          )}
+          {(isOwner || userRole === 'admin') && (
+            <button
+              onClick={() => setShowInviteModal(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <Send className="w-4 h-4" />
+              Invitar miembro
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Channels */}
+      {canManageChannels && (
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">Canales conectados</h2>
+              <p className="text-sm text-gray-600">Agrega y administra canales ilimitados</p>
+            </div>
+            <button
+              onClick={() => setShowChannelModal(true)}
+              className="inline-flex items-center gap-2 px-3 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+            >
+              <Sparkles className="w-4 h-4" />
+              Nuevo canal
+            </button>
+          </div>
+          {channels.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">Aún no has agregado canales</div>
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {channels.map((channel) => {
+                const cfg = platformConfig[channel.platform];
+                const Icon = cfg.icon;
+                return (
+                  <div key={channel.id} className="border border-gray-200 rounded-lg p-4 flex flex-col gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${cfg.bg}`}>
+                        <Icon className={`w-5 h-5 ${cfg.color}`} />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-semibold text-gray-900">{channel.name}</p>
+                        <p className="text-sm text-gray-600">{cfg.label}</p>
+                      </div>
+                      <span className={`text-xs px-2 py-1 rounded-full ${channel.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
+                        {channel.status === 'active' ? 'Activo' : 'Inactivo'}
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2 text-xs text-gray-600">
+                      <span className="px-2 py-1 bg-gray-100 rounded-full">Distribución: {channel.distribution === 'team' ? 'Equipo completo' : 'Asignados'}</span>
+                      {channel.automation_enabled && <span className="px-2 py-1 bg-amber-100 text-amber-700 rounded-full">Automatizaciones</span>}
+                      {channel.auto_reply_enabled && <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full">Auto-respuestas</span>}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Gestión de Equipo</h1>
           <p className="text-gray-600">Administra los miembros de tu equipo y sus permisos</p>
         </div>
@@ -684,6 +860,166 @@ export default function TeamPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showChannelModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full">
+            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-gray-900">Agregar canal</h2>
+              <button onClick={() => setShowChannelModal(false)} className="text-gray-500 hover:text-gray-700">
+                <XCircle className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6 space-y-6">
+              <div className="grid gap-3 sm:grid-cols-2">
+                {(['whatsapp','facebook','instagram','linkedin','tiktok'] as Channel['platform'][]).map(platform => {
+                  const cfg = platformConfig[platform];
+                  const Icon = cfg.icon;
+                  return (
+                    <label
+                      key={platform}
+                      className={`flex items-center gap-3 p-3 border-2 rounded-lg cursor-pointer transition-all ${
+                        channelForm.platform === platform ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="platform"
+                        value={platform}
+                        checked={channelForm.platform === platform}
+                        onChange={() => setChannelForm({ ...channelForm, platform })}
+                        className="hidden"
+                      />
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${cfg.bg}`}>
+                        <Icon className={`w-5 h-5 ${cfg.color}`} />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-gray-900">{cfg.label}</p>
+                        <p className="text-xs text-gray-600">Conecta un canal de {cfg.label}</p>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Nombre interno</label>
+                <input
+                  type="text"
+                  value={channelForm.name}
+                  onChange={(e) => setChannelForm({ ...channelForm, name: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-gray-900 placeholder:text-gray-400"
+                  placeholder="Ej. WhatsApp ventas norte"
+                />
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Distribución</label>
+                  <div className="space-y-2">
+                    <label className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer ${channelForm.distribution === 'team' ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200'}`}>
+                      <input
+                        type="radio"
+                        name="distribution"
+                        value="team"
+                        checked={channelForm.distribution === 'team'}
+                        onChange={() => setChannelForm({ ...channelForm, distribution: 'team', assigned_member_ids: members.map(m => m.id) })}
+                      />
+                      <span className="text-sm text-gray-800">Equipo completo</span>
+                    </label>
+                    <label className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer ${channelForm.distribution === 'selected' ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200'}`}>
+                      <input
+                        type="radio"
+                        name="distribution"
+                        value="selected"
+                        checked={channelForm.distribution === 'selected'}
+                        onChange={() => setChannelForm({ ...channelForm, distribution: 'selected', assigned_member_ids: [] })}
+                      />
+                      <span className="text-sm text-gray-800">Miembros seleccionados</span>
+                    </label>
+                  </div>
+                </div>
+
+                {channelForm.distribution === 'selected' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Asignar a miembros</label>
+                    <div className="space-y-2 max-h-48 overflow-y-auto border border-gray-200 rounded-lg p-3">
+                      {members.map((member) => (
+                        <label key={member.id} className="flex items-center gap-3 text-sm text-gray-800">
+                          <input
+                            type="checkbox"
+                            checked={channelForm.assigned_member_ids.includes(member.id)}
+                            onChange={(e) => {
+                              const next = e.target.checked
+                                ? [...channelForm.assigned_member_ids, member.id]
+                                : channelForm.assigned_member_ids.filter(id => id !== member.id);
+                              setChannelForm({ ...channelForm, assigned_member_ids: next });
+                            }}
+                          />
+                          <span>{member.full_name || member.email}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={channelForm.automation_enabled}
+                    onChange={(e) => setChannelForm({ ...channelForm, automation_enabled: e.target.checked })}
+                  />
+                  <div>
+                    <p className="font-medium text-gray-900 text-sm">Automatizaciones</p>
+                    <p className="text-xs text-gray-600">Habilita flujos y mensajes automáticos</p>
+                  </div>
+                </label>
+                <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={channelForm.auto_reply_enabled}
+                    onChange={(e) => setChannelForm({ ...channelForm, auto_reply_enabled: e.target.checked })}
+                  />
+                  <div>
+                    <p className="font-medium text-gray-900 text-sm">Auto-replies</p>
+                    <p className="text-xs text-gray-600">Respuestas instantáneas para fuera de horario</p>
+                  </div>
+                </label>
+              </div>
+
+              <div className="flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowChannelModal(false)}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  disabled={sending || !channelForm.name.trim()}
+                  onClick={handleCreateChannel}
+                  className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors disabled:bg-gray-400 flex items-center gap-2"
+                >
+                  {sending ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      Guardando...
+                    </>
+                  ) : (
+                    <>
+                      <Share2 className="w-4 h-4" />
+                      Guardar canal
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

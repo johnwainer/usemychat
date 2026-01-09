@@ -376,9 +376,20 @@ export default function TeamPage() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Gestión de Equipo</h1>
-        <p className="text-gray-600">Administra los miembros de tu equipo y sus permisos</p>
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Gestión de Equipo</h1>
+          <p className="text-gray-600">Administra los miembros de tu equipo y sus permisos</p>
+        </div>
+        {(isOwner || userRole === 'admin') && (
+          <button
+            onClick={() => setShowInviteModal(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <Send className="w-4 h-4" />
+            Invitar miembro
+          </button>
+        )}
       </div>
 
       {/* Team Owner Info (for members) */}

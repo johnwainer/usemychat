@@ -17,10 +17,7 @@ import {
   Edit,
   Trash2,
   Eye,
-  TrendingUp,
-  UserCheck,
-  UserPlus,
-  Activity
+  TrendingUp
 } from 'lucide-react';
 import Link from 'next/link';
 import ContactModal from './ContactModal';
@@ -43,17 +40,8 @@ interface Contact {
   created_at: string;
 }
 
-interface ContactStats {
-  total_contacts: number;
-  active_contacts: number;
-  leads: number;
-  customers: number;
-  new_contacts_last_30_days: number;
-}
-
 export default function ContactsPage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
-  const [stats, setStats] = useState<ContactStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
@@ -82,7 +70,6 @@ export default function ContactsPage() {
 
   useEffect(() => {
     fetchContacts();
-    fetchStats();
   }, [statusFilter]);
 
   const fetchContacts = async () => {
@@ -108,45 +95,16 @@ export default function ContactsPage() {
     }
   };
 
-  const fetchStats = async () => {
-    try {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (!user) return;
-
-      const { data, error } = await supabase
-        .from('contact_statistics')
-        .select('*')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      if (error && error.code !== 'PGRST116') {
-        throw error;
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpenMenuId(null);
       }
+    };
 
-      if (data) {
-        setStats(data);
-      } else {
-        setStats({
-          total_contacts: 0,
-          active_contacts: 0,
-          leads: 0,
-          customers: 0,
-          new_contacts_last_30_days: 0,
-        });
-      }
-    } catch (error) {
-      console.error('Error fetching stats:', error);
-      setStats({
-        total_contacts: 0,
-        active_contacts: 0,
-        leads: 0,
-        customers: 0,
-        new_contacts_last_30_days: 0,
-      });
-    }
-  };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const filteredContacts = contacts.filter(contact => {
     const matchesSearch =
@@ -192,7 +150,6 @@ export default function ContactsPage() {
       if (error) throw error;
 
       setContacts(contacts.filter(c => c.id !== contactId));
-      fetchStats();
     } catch (error) {
       console.error('Error deleting contact:', error);
       alert('Error al eliminar el contacto');
@@ -201,7 +158,6 @@ export default function ContactsPage() {
 
   const handleSaveContact = () => {
     fetchContacts();
-    fetchStats();
   };
 
   if (loading) {
@@ -234,56 +190,6 @@ export default function ContactsPage() {
             Nuevo Contacto
           </button>
         </div>
-
-        {stats && (
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-            <div className="bg-white rounded-lg shadow p-4 border border-gray-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Total Contactos</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.total_contacts || 0}</p>
-                </div>
-                <Users className="w-8 h-8 text-blue-500" />
-              </div>
-            </div>
-            <div className="bg-white rounded-lg shadow p-4 border border-gray-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Activos</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.active_contacts || 0}</p>
-                </div>
-                <UserCheck className="w-8 h-8 text-green-500" />
-              </div>
-            </div>
-            <div className="bg-white rounded-lg shadow p-4 border border-gray-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Leads</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.leads || 0}</p>
-                </div>
-                <TrendingUp className="w-8 h-8 text-yellow-500" />
-              </div>
-            </div>
-            <div className="bg-white rounded-lg shadow p-4 border border-gray-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Clientes</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.customers || 0}</p>
-                </div>
-                <Activity className="w-8 h-8 text-purple-500" />
-              </div>
-            </div>
-            <div className="bg-white rounded-lg shadow p-4 border border-gray-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Nuevos (30d)</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.new_contacts_last_30_days || 0}</p>
-                </div>
-                <UserPlus className="w-8 h-8 text-indigo-500" />
-              </div>
-            </div>
-          </div>
-        )}
 
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <div className="flex-1 relative">

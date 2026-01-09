@@ -3,15 +3,9 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import {
-  Users,
-  UserPlus,
   Mail,
   Shield,
   Trash2,
-  Edit,
-  MoreVertical,
-  Search,
-  Filter,
   Crown,
   Eye,
   UserCog,
@@ -94,9 +88,8 @@ export default function TeamPage() {
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState<'admin' | 'supervisor' | 'agent' | 'viewer'>('agent');
   const [sending, setSending] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterRole, setFilterRole] = useState<string>('all');
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [searchTerm] = useState('');
+  const [filterRole] = useState<string>('all');
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [isOwner, setIsOwner] = useState(false);
@@ -112,8 +105,6 @@ export default function TeamPage() {
     // Get current user
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
-
-    setCurrentUser(user);
 
     // Check if user is a team member (not owner)
     const { data: memberData } = await supabase
@@ -135,8 +126,6 @@ export default function TeamPage() {
         .single();
 
       setTeamOwner(ownerProfile);
-      setUserRole(memberData.role);
-      setIsOwner(false);
 
       // Fetch team members from the owner's workspace
       const { data: membersData } = await supabase
@@ -561,7 +550,7 @@ export default function TeamPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right">
                       <div className="flex items-center justify-end gap-2">
-                        {member.role !== 'owner' && (
+                        {isOwner && member.role !== 'owner' && (
                           <>
                             <select
                               value={member.role}
@@ -580,6 +569,9 @@ export default function TeamPage() {
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </>
+                        )}
+                        {!isOwner && (
+                          <span className="text-sm text-gray-500">Solo lectura</span>
                         )}
                       </div>
                     </td>
